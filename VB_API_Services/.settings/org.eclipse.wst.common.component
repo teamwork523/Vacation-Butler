@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="VB_API_Services">
-        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <wb-resource deploy-path="/WEB-INF/.ebextensions" source-path="/.ebextensions"/>
-        <property name="context-root" value="VB_API_Services"/>
-        <property name="java-output-path" value="/VB_API_Services/build/classes"/>
-    </wb-module>
-</project-modules>

@@ -1,7 +1,10 @@
-# ignore .class files 
+# ignore .class and other output files 
 /build/
+/target/
 
 # Never check-in Credentials
 */AwsCredentials.properties
 
-
+# AWS configuration
+.ebextensions/
+.settings/
