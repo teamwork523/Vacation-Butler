@@ -4,7 +4,7 @@
  
     <groupId>com.vb</groupId>
     <artifactId>vb-api-services</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
     
     <properties>
         <dropwizard.version>0.7.1</dropwizard.version>

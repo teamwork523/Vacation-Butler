@@ -1,1 +1,7 @@
+# ignore .class files 
 /build/
+
+# Never check-in Credentials
+*/AwsCredentials.properties
+
+
