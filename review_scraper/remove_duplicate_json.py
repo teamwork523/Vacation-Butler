@@ -1,8 +1,12 @@
 import json
 
-json_data = open('data.json')
+raw_file = open('data.json')
+raw_data = raw_file.read()
+# combine multiple json objects into one
+json_data = raw_data.replace("][", ", ")
+
 output_file = open("processed_data.json", "w")
-old_list = json.load(json_data)
+old_list = json.loads(json_data)
 
 started_number = 0;
 final_number = 0;
@@ -19,6 +23,6 @@ for i in old_list:
 
 json.dump(newlist, output_file)
 output_file.close()
-json_data.close()
+raw_file.close()
 print 'removed ' + str(started_number - final_number) + " duplicates"
 print 'final number of entries: ' + str(final_number)

@@ -5,7 +5,7 @@ from lxml import etree
 import re
 from types import NoneType
 
-json_data=open('scraped_data_from_Dec_2014.json')
+json_data=open('processed_data.json')
 
 data = json.load(json_data)
 names = []

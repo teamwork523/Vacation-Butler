@@ -1,7 +1,13 @@
-Please make sure you have scrapy 24.4 installed
+Require scrapy 24.4, selenium 2.44, and Firefox
+sudo pip install scrapy
+sudo pip install selenium
 
-Scrape from trip advisor:
+Get all the cities in a province:
+1) enter “python get_urls.py”. The script will launch Firefox via selenium.
+Selenium will get the ajax contents.
+2) output city_urls.json
 
+Scrape attractions\activities from trip advisor:
 1) open a terminal
 2) cd to the directory of the scraper
 3) enter "scrapy crawl myspider -o data.json". This will run the spider and save the scraped data to data.json
