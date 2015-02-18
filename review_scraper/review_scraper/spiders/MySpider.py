@@ -1,4 +1,5 @@
 import scrapy
+import json
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors import LinkExtractor
 from review_scraper.items import ReviewScraperItem
@@ -6,7 +7,10 @@ from review_scraper.items import ReviewScraperItem
 class MySpider(CrawlSpider):
     name = 'myspider'
     allowed_domains = ['tripadvisor.ca']
-    start_urls = ['http://www.tripadvisor.ca/Attractions-g154943-Activities-Vancouver_British_Columbia.html']
+    raw_file = open('city_urls.json')
+    raw_data = raw_file.read()
+    start_urls = json.loads(raw_data)
+    # start_urls = ['http://www.tripadvisor.ca/Attractions-g154943-Activities-Vancouver_British_Columbia.html', 'http://www.tripadvisor.ca/Attractions-g154943-Activities-c25-Vancouver_British_Columbia.html']
 
     rules = (
         # Extract all links that have the word 'Attractions-' and parse them with the callback function parse_item

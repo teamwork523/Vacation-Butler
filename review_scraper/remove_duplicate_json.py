@@ -3,8 +3,8 @@ import json
 raw_file = open('data.json')
 raw_data = raw_file.read()
 # combine multiple json objects into one
-json_data = raw_data.replace("][", ", ")
-
+json_data = raw_data.replace("][[", ", ")
+json_data = json_data.replace("][", ", ")
 output_file = open("processed_data.json", "w")
 old_list = json.loads(json_data)
 

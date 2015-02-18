@@ -1,5 +1,6 @@
 import json
 import selenium
+import re
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
@@ -25,7 +26,11 @@ num_cities = 0
 city_urls = []
 city_divs = driver.find_elements_by_xpath('//a[@class="popularCity hoverHighlight"]')
 for div in city_divs:
-    city_urls.append(div.get_attribute("href"))
+    general_url = div.get_attribute("href") # link to the city page
+    attraction_url = re.sub(r'Tourism-g([0-9]+)-(.+)-Vacations.html', r'Attractions-g\1-Activities-\2.html', general_url)
+    activity_url = attraction_url.replace("-Activities-","-Activities-c25-")
+    city_urls.append(attraction_url)
+    city_urls.append(activity_url)
     num_cities +=1
 
 with open("city_urls.json", "w") as outfile:
