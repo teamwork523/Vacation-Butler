@@ -7,7 +7,7 @@ sudo apt-get update -y
 sudo apt-get install -y default-jdk
 
 # Install App
-COPY . /app
+COPY ./VB_API_Services /app/VB_API_Services
 
 EXPOSE 8080
-CMD ["/usr/bin/java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
+CMD ["java", "-jar", "/app/VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
