@@ -14,7 +14,8 @@ encountered = set()
 newlist = []
 for i in old_list:
     started_number += 1
-    repr_i = repr(i)
+    review_url = i["review_url"]
+    repr_i = repr(review_url)
     if repr_i in encountered:
        continue
     encountered.add(repr_i)
