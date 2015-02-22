@@ -5,7 +5,7 @@
 
 # Package Files #
 *.jar
-!VB_API_Service/target/vb-api-services*.jar
+! */target/vb-api-services*.jar
 *.war
 *.ear
 
