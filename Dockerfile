@@ -22,4 +22,4 @@ ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 EXPOSE 8080
 #CMD ["java", "-jar", "/src/VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
 #CMD ["java", "-jar", "./VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
-CMD ["pwd", "&", "ls"]
+CMD pwd && ls
