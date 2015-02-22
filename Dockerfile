@@ -17,7 +17,7 @@ RUN update-alternatives --display java
 RUN echo "JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /etc/environment
 
 # Install App
-COPY ./VB_API_Services /app/VB_API_Services
+COPY ./VB_API_Services /app/
 
 EXPOSE 8080
 CMD ["java", "-jar", "/app/VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
