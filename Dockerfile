@@ -14,7 +14,8 @@ RUN echo "oracle-java7-installer shared/accepted-oracle-license-v1-1 boolean tru
 # Install Oracle Java
 RUN apt-get -y install oracle-java7-installer
 RUN update-alternatives --display java
-RUN echo "JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /etc/environment
+ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
+#RUN echo "JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /etc/environment
 
 # Install App
 Add . /src
