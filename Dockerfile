@@ -24,7 +24,6 @@ ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 RUN apt-get -y install maven
 
 # Install VB Service APIs
-RUN ["cd", "VB_API_Services", "&&", "sudo", "mvn", "clean", "install"]
+RUN mvn -f VB_API_Services/pom.xml clean install
 EXPOSE 8080
 CMD ["java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
-#CMD pwd && echo "$$$$" && id -u -n && echo "####" && ls -alh
