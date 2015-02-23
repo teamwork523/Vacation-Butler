@@ -1,7 +1,7 @@
 FROM ubuntu:14.04
 
 # Declare working directory
-WORKDIR /app
+WORKDIR /var/app/current
 
 # Update Package
 sudo apt-get update -y
@@ -23,7 +23,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 RUN apt-get -y install maven
 
 # Install VB Service APIs
-ADD /var/app/current/VB_API_Services /app/VB_API_Services
+#ADD /var/app/current/VB_API_Services /app/VB_API_Services
 RUN cd VB_API_Services && mvn clean install
 EXPOSE 8080
 CMD ["java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
