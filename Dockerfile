@@ -24,8 +24,9 @@ RUN apt-get -y install maven \
                        sudo
 
 # Install VB Service APIs
-RUN chmod a+rx VB_API_Services/pom.xml && mvn -f VB_API_Services/pom.xml clean install
+#RUN chmod a+rx VB_API_Services/pom.xml && mvn -f VB_API_Services/pom.xml clean install
 EXPOSE 8080
-CMD ["java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
+#CMD ["java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
+CMD ["mvn". "-f", "VB_API_Services/pom.xml", "clean", "install", "&&", "java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
 #CMD  ls -lha /var
 #CMD find . -iname pom.xml
