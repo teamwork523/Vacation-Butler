@@ -15,8 +15,11 @@ RUN echo "oracle-java7-installer shared/accepted-oracle-license-v1-1 boolean tru
 RUN apt-get -y install oracle-java7-installer
 RUN update-alternatives --display java
 ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
-#RUN echo "JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /etc/environment
 
-# Install App
+# Install Maven
+RUN apt-get -y install maven
+
+# Install VB Service APIs
+RUN cd ./var/app/current/VB_API_Services && mvn clean install
 EXPOSE 8080
 CMD ["java", "-jar", "./var/app/current/VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
