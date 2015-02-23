@@ -7,7 +7,8 @@ WORKDIR /var/app/current
 sudo apt-get update -y
 
 # Add oracle java 7 repository
-RUN apt-get -y install software-properties-common
+RUN apt-get -y install software-properties-common \
+                       sudo
 RUN add-apt-repository ppa:webupd8team/java
 RUN apt-get -y update
 
@@ -24,7 +25,7 @@ RUN apt-get -y install maven
 
 # Install VB Service APIs
 #ADD /var/app/current/VB_API_Services /app/VB_API_Services
-#RUN cd VB_API_Services && mvn clean install
+RUN sudo cd VB_API_Services && sudo mvn clean install
 EXPOSE 8080
-#CMD ["java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
-CMD pwd && echo "$$$$" && id -u -n && echo "####" && ls -alh
+CMD ["java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
+#CMD pwd && echo "$$$$" && id -u -n && echo "####" && ls -alh
