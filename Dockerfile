@@ -25,7 +25,8 @@ RUN apt-get -y install maven
 
 # Install VB Service APIs
 #ADD /var/app/current/VB_API_Services /app/VB_API_Services
-RUN sudo cd VB_API_Services && sudo mvn clean install
+#RUN sudo cd VB_API_Services && sudo mvn clean install
 EXPOSE 8080
-CMD ["java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
+#CMD ["java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
 #CMD pwd && echo "$$$$" && id -u -n && echo "####" && ls -alh
+CMD id -u -n
