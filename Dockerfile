@@ -18,6 +18,6 @@ ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 #RUN echo "JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /etc/environment
 
 # Install App
-#Add /var/app/current/VB_API_Services /src
+COPY /var/app/current/VB_API_Services /src
 EXPOSE 8080
-CMD ["java", "-jar", "./var/app/current/VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
+CMD ["java", "-jar", "/src/VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
