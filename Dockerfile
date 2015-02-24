@@ -25,8 +25,12 @@ RUN apt-get -y install maven \
 
 # Install VB Service APIs
 #RUN chmod a+rx VB_API_Services/pom.xml && mvn -f VB_API_Services/pom.xml clean install
+RUN pwd >> /results
+RUN find . -iname pom.xml >> /results
+RUN ls -l $(find . -iname pom.xml) >> /results
 EXPOSE 8080
+CMD cat /results
 #CMD ["java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
-CMD ["mvn", "-f", "VB_API_Services/pom.xml", "clean", "install", "&&", "java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
+#CMD ["mvn", "-f", "VB_API_Services/pom.xml", "clean", "install", "&&", "java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
 #CMD  ls -lha /var
 #CMD find . -iname pom.xml
