@@ -20,12 +20,12 @@ RUN update-alternatives --display java
 ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 
 # Install Maven
-RUN apt-get -y install maven \
-                       sudo
+RUN apt-get -y install maven
 
 # Install VB Service APIs
 #RUN chmod a+rx VB_API_Services/pom.xml && mvn -f VB_API_Services/pom.xml clean install
-RUN find / -iname VB_API_Services >> /results
+ADD VB_API_Services /var/app/current
+RUN find . -iname VB_API_Services >> /results
 EXPOSE 8080
 CMD cat /results
 #CMD ["java", "-jar", "VB_API_Services/target/vb-api-services-0.0.1-SNAPSHOT.jar", "server"]
