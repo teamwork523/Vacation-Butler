@@ -15,7 +15,12 @@ public class CityCRUDAPIImpl implements CityCRUDAPI {
 	
 	@Override
 	public Response readCityByID(String cityID) {
-		return null;
+		CityRs testCityRs = new CityRs();
+		testCityRs.setResultCode(0);
+		testCityRs.setCityID(cityID);
+		testCityRs.setCityName("seattle");
+		testCityRs.setCountryName("usa");
+		return Response.ok(testCityRs).build();
 	}
 
 	@Override
