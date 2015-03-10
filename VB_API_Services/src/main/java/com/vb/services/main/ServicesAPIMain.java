@@ -2,7 +2,8 @@ package com.vb.services.main;
 
 import com.vb.services.configuration.ServicesAPIConfigurations;
 import com.vb.services.health.LocationsHealthCheck;
-import com.vb.services.locations.api.LocationsCRUDAPI;
+import com.vb.services.locations.api.CityCRUDAPIImpl;
+import com.vb.services.locations.api.PlaceCRUDAPI;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -22,7 +23,8 @@ public class ServicesAPIMain extends Application<ServicesAPIConfigurations> {
 	@Override
 	public void run(ServicesAPIConfigurations conf, Environment env)
 			throws Exception {
-		final LocationsCRUDAPI locAPI = new LocationsCRUDAPI();
+		final PlaceCRUDAPI locAPI = new PlaceCRUDAPI();
+		final CityCRUDAPIImpl cityPAI = new CityCRUDAPIImpl();
 		final LocationsHealthCheck locHealth = new LocationsHealthCheck();
 		
 		// Register Health Checks
@@ -30,6 +32,7 @@ public class ServicesAPIMain extends Application<ServicesAPIConfigurations> {
 		
 		// Register APIs
 		env.jersey().register(locAPI);
+		env.jersey().register(cityPAI);
 	}
 
 }
