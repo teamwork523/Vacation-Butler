@@ -7,8 +7,8 @@ from review_scraper.items import ReviewScraperItem
 class MySpider(CrawlSpider):
     name = 'myspider'
     allowed_domains = ['tripadvisor.ca']
-    raw_file = open('city_urls.json')
-    raw_data = raw_file.read()
+    #raw_file = open('city_urls.json')
+    #raw_data = raw_file.read()
     #start_urls = json.loads(raw_data)
     start_urls = ['http://www.tripadvisor.ca/Attractions-g154943-Activities-Vancouver_British_Columbia.html']
 
