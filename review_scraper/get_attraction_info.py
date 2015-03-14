@@ -25,24 +25,25 @@ for name_index in range(len(names)):
     query_url = "http://www.tripadvisor.ca" + review_urls[name_index]
     htmlparser = etree.HTMLParser()
     tree = etree.parse(opener.open(query_url), htmlparser)
-    result = tree.xpath('//b[text() = "Recommended length of visit:"]/following-sibling::text()')
+    length_of_visit = tree.xpath('//b[text() = "Recommended length of visit:"]/following-sibling::text()')
     place = {}
     place["name"] = data[name_index]["name"][0]
-    if result == []:
+    if length_of_visit == []:
         place["recommended_length_of_visit"] = "NA"
     else:
-        result_str = str(result[0])
-        if "hour" in result_str:
-            place["recommended_length_of_visit"] = result_str
+        length_of_visit_str = str(length_of_visit[0])
+        if "hour" in length_of_visit_str:
+            place["recommended_length_of_visit"] = length_of_visit_str
         else:
             place["recommended_length_of_visit"] = "NA"
+    city_name = tree.xpath('//b[text() = "Recommended length of visit:"]/following-sibling::text()')
     google_query = "https://www.google.com/search?q=" + names[name_index]
     soup = BeautifulSoup(opener.open(google_query).read())
-    result = soup.find_all("span", {"class" : "loht__open-interval"})
-    if result == []:
+    length_of_visit = soup.find_all("span", {"class" : "loht__open-interval"})
+    if length_of_visit == []:
         place["hours"] = "NA"
     else:
-        place["hours"] = "Sunday: " + result[0].text + " Monday: " + result[1].text + " Tuesday: " + result[2].text + " Wednesday: " + result[3].text + " Thursday: " + result[4].text + " Friday: " + result[5].text + " Saturday: " + result[6].text
+        place["hours"] = "Sunday: " + length_of_visit[0].text + " Monday: " + length_of_visit[1].text + " Tuesday: " + length_of_visit[2].text + " Wednesday: " + length_of_visit[3].text + " Thursday: " + length_of_visit[4].text + " Friday: " + length_of_visit[5].text + " Saturday: " + length_of_visit[6].text
     final_list.append(place)
     #time.sleep(1) #to avoid blacklist
 
