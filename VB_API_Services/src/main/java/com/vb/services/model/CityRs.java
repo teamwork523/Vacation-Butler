@@ -13,7 +13,7 @@ public class CityRs {
 	/**
 	 * Stored data field in DynamoDB
 	 */
-	private String cityID;
+	private Integer cityID;
 	private String cityName;
 	private String stateName;
 	private String countryName;
@@ -33,7 +33,7 @@ public class CityRs {
 	 * @return the cityID
 	 */
 	@JsonProperty("City ID")
-	public String getCityID() {
+	public Integer getCityID() {
 		return cityID;
 	}
 	
@@ -41,7 +41,7 @@ public class CityRs {
 	 * @param cityID the cityID to set
 	 */
 	@JsonProperty("City ID")
-	public void setCityID(String cityID) {
+	public void setCityID(Integer cityID) {
 		this.cityID = cityID;
 	}
 	

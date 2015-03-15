@@ -3,6 +3,7 @@ package com.vb.dynamodb.model;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBVersionAttribute;
 
 /**
  * Map City table to Java object
@@ -13,16 +14,17 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 @DynamoDBTable(tableName="CitiesTable")
 public class CityItem {
 	
-	private String cityID;
+	private Integer cityID;
 	private String cityName;
 	private String stateName;
 	private String countryName;
+	private Long   version;
 	
 	@DynamoDBHashKey(attributeName="CityID")
-	public String getCityID() {
+	public Integer getCityID() {
 		return cityID;
 	}
-	public void setCityID(String cityID) {
+	public void setCityID(Integer cityID) {
 		this.cityID = cityID;
 	}
 	
@@ -50,4 +52,13 @@ public class CityItem {
 		this.countryName = countryName;
 	}
 	
+	/**
+	 * Version control to prevent unintended data operation conflict
+	 * Detail: http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/JavaVersionSupportHLAPI.html
+	 * 
+	 * @return
+	 */
+	@DynamoDBVersionAttribute
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version;}
 }

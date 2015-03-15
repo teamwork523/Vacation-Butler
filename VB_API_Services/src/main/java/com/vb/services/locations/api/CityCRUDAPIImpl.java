@@ -14,7 +14,7 @@ public class CityCRUDAPIImpl implements CityCRUDAPI {
 	}
 	
 	@Override
-	public Response readCityByID(String cityID) {
+	public Response readCityByID(Integer cityID) {
 		CityRs testCityRs = new CityRs();
 		testCityRs.setResultCode(0);
 		testCityRs.setCityID(cityID);
@@ -30,13 +30,13 @@ public class CityCRUDAPIImpl implements CityCRUDAPI {
 	}
 
 	@Override
-	public Response updateCity(String id, CityRq city) {
+	public Response updateCity(Integer cityID, CityRq city) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Response deleteCityByID(String id) {
+	public Response deleteCityByID(Integer cityID) {
 		// TODO Auto-generated method stub
 		return null;
 	}

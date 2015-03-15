@@ -22,7 +22,7 @@ public interface CityCRUDAPI {
 	
 	@GET
 	@Path("/readcitybyid/{city_id}")
-    public Response readCityByID(@PathParam("city_id") String cityID);
+    public Response readCityByID(@PathParam("city_id") Integer cityID);
 	
 	@GET
 	@Path("/readcitybyname/{city_name}")
@@ -30,9 +30,9 @@ public interface CityCRUDAPI {
 	
 	@PUT
 	@Path("/updatecity/{city_id}")
-    public Response updateCity(@PathParam("city_id") String id, CityRq city);
+    public Response updateCity(@PathParam("city_id") Integer cityID, CityRq city);
 	
 	@DELETE
 	@Path("/deletecity/{city_id}")
-    public Response deleteCityByID(@PathParam("city_id") String id);
+    public Response deleteCityByID(@PathParam("city_id") Integer cityID);
 }
