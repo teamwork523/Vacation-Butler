@@ -34,5 +34,5 @@ public interface CityCRUDAPI {
 	
 	@DELETE
 	@Path("/deletecity/{city_id}")
-    public Response deleteCity(@PathParam("city_id") String id, CityRq city);
+    public Response deleteCityByID(@PathParam("city_id") String id);
 }

@@ -1,17 +1,17 @@
-package com.vb.dynamodb.dao;
+package com.vb.dynamodb.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 /**
- * Map DyamanoDB City table to Java object
+ * Map City table to Java object
  * 
  * @author Haokun Luo
  *
  */
 @DynamoDBTable(tableName="CitiesTable")
-public class CityDAO {
+public class CityItem {
 	
 	private String cityID;
 	private String cityName;

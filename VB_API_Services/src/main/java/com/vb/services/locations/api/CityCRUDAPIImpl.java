@@ -36,7 +36,7 @@ public class CityCRUDAPIImpl implements CityCRUDAPI {
 	}
 
 	@Override
-	public Response deleteCity(String id, CityRq city) {
+	public Response deleteCityByID(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
