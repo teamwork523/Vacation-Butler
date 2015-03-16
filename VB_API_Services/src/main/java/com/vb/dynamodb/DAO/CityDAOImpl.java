@@ -8,7 +8,7 @@ import com.vb.dynamodb.model.CityItem;
  * @author Haokun Luo
  *
  */
-//TODO: Add Spring annotation
+// TODO: Add Spring annotation
 public class CityDAOImpl implements CityDAO {
 
 	@Override
