@@ -2,6 +2,7 @@ package com.vb.dynamodb.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBVersionAttribute;
 
@@ -28,7 +29,8 @@ public class CityItem {
 		this.cityID = cityID;
 	}
 	
-	@DynamoDBAttribute(attributeName="CityName")
+	@DynamoDBIndexHashKey(attributeName="CityName", 
+						  globalSecondaryIndexName = "CityName-index")
 	public String getCityName() {
 		return cityName;
 	}
@@ -36,7 +38,8 @@ public class CityItem {
 		this.cityName = cityName;
 	}
 	
-	@DynamoDBAttribute(attributeName="StateName")
+	@DynamoDBIndexHashKey(attributeName="StateName", 
+			 			   globalSecondaryIndexName = "StateName-index")
 	public String getStateName() {
 		return stateName;
 	}
@@ -44,7 +47,8 @@ public class CityItem {
 		this.stateName = stateName;
 	}
 	
-	@DynamoDBAttribute(attributeName="CountryName")
+	@DynamoDBIndexHashKey(attributeName="CountryName ", 
+			   			   globalSecondaryIndexName = "CountryName-index")
 	public String getCountryName() {
 		return countryName;
 	}
