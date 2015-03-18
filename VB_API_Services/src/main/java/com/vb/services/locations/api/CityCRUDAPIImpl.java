@@ -2,25 +2,15 @@ package com.vb.services.locations.api;
 
 import javax.ws.rs.core.Response;
 
-import com.vb.services.model.CityRq;
-import com.vb.services.model.CityRs;
+import com.vb.services.model.CreateCityRq;
+import com.vb.services.model.UpdateCityRq;
 
 public class CityCRUDAPIImpl implements CityCRUDAPI {
 
 	@Override
-	public Response createCity(CityRq city) {
+	public Response createCity(CreateCityRq city) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	@Override
-	public Response readCityByID(Integer cityID) {
-		CityRs testCityRs = new CityRs();
-		testCityRs.setResultCode(0);
-		testCityRs.setCityID(cityID);
-		testCityRs.setCityName("seattle");
-		testCityRs.setCountryName("usa");
-		return Response.ok(testCityRs).build();
 	}
 
 	@Override
@@ -30,15 +20,14 @@ public class CityCRUDAPIImpl implements CityCRUDAPI {
 	}
 
 	@Override
-	public Response updateCity(Integer cityID, CityRq city) {
+	public Response updateCityByNameAndID(Integer cityID, UpdateCityRq city) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
-	public Response deleteCityByID(Integer cityID) {
+	public Response deleteCityByNameAndID(Integer cityID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

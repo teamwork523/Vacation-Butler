@@ -3,12 +3,12 @@ package com.vb.services.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * City API request object
+ * Create city API request object
  * 
  * @author Haokun Luo
  *
  */
-public class CityRq {
+public class CreateCityRq {
 	
 	/**
 	 * Stored data field in DynamoDB
@@ -73,7 +73,7 @@ public class CityRq {
 	 * @param stateName
 	 * @param countryName
 	 */
-	public CityRq(String cityName, String stateName, String countryName) {
+	public CreateCityRq(String cityName, String stateName, String countryName) {
 		super();
 		this.cityName = cityName;
 		this.stateName = stateName;
@@ -83,7 +83,7 @@ public class CityRq {
 	/**
 	 * No-parameter contructor, required for Jackson deserialization
 	 */
-	public CityRq() {
+	public CreateCityRq() {
 		// no-op
 	}
 }

@@ -2,21 +2,15 @@ package com.vb.services.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * City API response object
- * 
- * @author Haokun Luo
- *
- */
-public class CityRs {
+public class ReadCityRs {
 	
 	/**
 	 * Stored data field in DynamoDB
 	 */
 	private Integer cityID;
-	private String cityName;
-	private String stateName;
-	private String countryName;
+	private String  cityName;
+	private String  stateName;
+	private String  countryName;
 	
 	/**
 	 * If request failed, why.

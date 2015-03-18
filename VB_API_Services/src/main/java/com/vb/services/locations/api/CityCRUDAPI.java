@@ -10,7 +10,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.vb.services.model.CityRq;
+import com.vb.services.model.CreateCityRq;
+import com.vb.services.model.UpdateCityRq;
 
 @Path("/api/city")
 @Produces(value = MediaType.APPLICATION_JSON)
@@ -18,21 +19,17 @@ public interface CityCRUDAPI {
 	
 	@POST
 	@Path("/createcity/{city_id}")
-    public Response createCity(CityRq city);
-	
-	@GET
-	@Path("/readcitybyid/{city_id}")
-    public Response readCityByID(@PathParam("city_id") Integer cityID);
+    public Response createCity(CreateCityRq city);
 	
 	@GET
 	@Path("/readcitybyname/{city_name}")
     public Response readCityByCityName(@PathParam("city_name") String cityName);
 	
 	@PUT
-	@Path("/updatecity/{city_id}")
-    public Response updateCity(@PathParam("city_id") Integer cityID, CityRq city);
+	@Path("/updatecity/cityname/{city_name}/city_id/{city_id}")
+    public Response updateCityByNameAndID(@PathParam("city_id") Integer cityID, UpdateCityRq city);
 	
 	@DELETE
-	@Path("/deletecity/{city_id}")
-    public Response deleteCityByID(@PathParam("city_id") Integer cityID);
+	@Path("/deletecity/cityname/{city_name}/city_id/{city_id}")
+    public Response deleteCityByNameAndID(@PathParam("city_id") Integer cityID);
 }
