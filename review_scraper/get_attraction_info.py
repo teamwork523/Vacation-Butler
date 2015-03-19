@@ -28,6 +28,7 @@ for name_index in range(len(names)):
     length_of_visit = tree.xpath('//b[text() = "Recommended length of visit:"]/following-sibling::text()')
     place = {}
     place["name"] = data[name_index]["name"][0]
+    place["review_url"] = review_urls[name_index]
     if length_of_visit == []:
         place["recommended_length_of_visit"] = "NA"
     else:
@@ -36,14 +37,32 @@ for name_index in range(len(names)):
             place["recommended_length_of_visit"] = length_of_visit_str
         else:
             place["recommended_length_of_visit"] = "NA"
-    city_name = tree.xpath('//b[text() = "Recommended length of visit:"]/following-sibling::text()')
+    city_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'City\'")]')
+    if city_name == []:
+        place["city"] = "NA"
+    else:
+        place["city"] = city_name[0].find('span').text
+    country_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'Country\'")]')
+    if country_name == []:
+        place["country"] = "NA"
+    else:
+        place["country"] = country_name[0].find('span').text
+    region_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'State\'")]')
+    if region_name == []:
+        region_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'Province\'")]')
+        if region_name == []:
+            place["region"] = "NA"
+        else:
+            place["region"] = region_name[0].find('span').text
+    else:
+        place["region"] = region_name[0].find('span').text
     google_query = "https://www.google.com/search?q=" + names[name_index]
     soup = BeautifulSoup(opener.open(google_query).read())
-    length_of_visit = soup.find_all("span", {"class" : "loht__open-interval"})
-    if length_of_visit == []:
+    opening_hours = soup.find_all("span", {"class" : "loht__open-interval"})
+    if opening_hours == []:
         place["hours"] = "NA"
     else:
-        place["hours"] = "Sunday: " + length_of_visit[0].text + " Monday: " + length_of_visit[1].text + " Tuesday: " + length_of_visit[2].text + " Wednesday: " + length_of_visit[3].text + " Thursday: " + length_of_visit[4].text + " Friday: " + length_of_visit[5].text + " Saturday: " + length_of_visit[6].text
+        place["hours"] = "Sunday: " + opening_hours[0].text + " Monday: " + opening_hours[1].text + " Tuesday: " + opening_hours[2].text + " Wednesday: " + opening_hours[3].text + " Thursday: " + opening_hours[4].text + " Friday: " + opening_hours[5].text + " Saturday: " + opening_hours[6].text
     final_list.append(place)
     #time.sleep(1) #to avoid blacklist
 
