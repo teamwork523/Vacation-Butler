@@ -56,6 +56,8 @@ for name_index in range(len(names)):
             place["region"] = region_name[0].find('span').text
     else:
         place["region"] = region_name[0].find('span').text
+    categories = tree.xpath('//div[@class="heading_details"]//a')
+    print categories[0].text
     google_query = "https://www.google.com/search?q=" + names[name_index]
     soup = BeautifulSoup(opener.open(google_query).read())
     opening_hours = soup.find_all("span", {"class" : "loht__open-interval"})
