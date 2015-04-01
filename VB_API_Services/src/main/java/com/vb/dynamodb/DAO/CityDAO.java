@@ -1,5 +1,7 @@
 package com.vb.dynamodb.DAO;
 
+import java.util.List;
+
 import com.vb.dynamodb.model.CityItem;
 
 /**
@@ -15,18 +17,12 @@ public interface CityDAO {
 	 */
 	void addCity(CityItem city);
 	
-	/**
-	 * @param cityID
-	 * @return
-	 */
-	CityItem retriveCityByID(String cityID);
-	
 	// TODO: maybe a list of partial mapped cities?
 	/**
 	 * @param cityID
 	 * @return
 	 */
-	CityItem retriveCityByName(String cityID);
+	List<CityItem> retriveCityByName(String cityName);
 	
 	/**
 	 * @param city
@@ -36,5 +32,5 @@ public interface CityDAO {
 	/**
 	 * @param cityID
 	 */
-	void deleteCityByID(String cityID);
+	void deleteCityByNameAndID(String cityName, Integer cityID);
 }

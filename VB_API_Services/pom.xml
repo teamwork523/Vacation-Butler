@@ -8,14 +8,25 @@
     
     <properties>
         <dropwizard.version>0.7.1</dropwizard.version>
+        <aws.version>1.9.25</aws.version>
     </properties>
  
     <dependencies>
+        <dependency>
+	        <groupId>com.amazonaws</groupId>
+	        <artifactId>aws-java-sdk</artifactId>
+	        <version>${aws.version}</version>
+        </dependency>
 	    <dependency>
 	        <groupId>io.dropwizard</groupId>
 	        <artifactId>dropwizard-core</artifactId>
 	        <version>${dropwizard.version}</version>
-	   </dependency>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.apache.commons</groupId>
+	        <artifactId>commons-lang3</artifactId>
+	        <version>3.3.2</version>
+	    </dependency>
     </dependencies>
     
     <build>

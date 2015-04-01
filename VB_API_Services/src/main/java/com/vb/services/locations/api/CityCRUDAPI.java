@@ -18,7 +18,7 @@ import com.vb.services.model.UpdateCityRq;
 public interface CityCRUDAPI {
 	
 	@POST
-	@Path("/createcity/{city_id}")
+	@Path("/createcity")
     public Response createCity(CreateCityRq city);
 	
 	@GET

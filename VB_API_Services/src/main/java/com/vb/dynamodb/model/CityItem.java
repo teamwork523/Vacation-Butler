@@ -21,6 +21,21 @@ public class CityItem {
 	private String  countryName;
 	private Long    version;
 	
+	// Constructor for all the essential fields
+	public CityItem(String cityName, Integer cityID, String stateName,
+			String countryName) {
+		super();
+		this.cityName = cityName;
+		this.cityID = cityID;
+		this.stateName = stateName;
+		this.countryName = countryName;
+	}
+
+	// Default constructor
+	public CityItem() {
+		super();
+	}
+
 	@DynamoDBHashKey(attributeName="CityName")
 	public String getCityName() {
 		return cityName;
