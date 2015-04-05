@@ -157,9 +157,7 @@ public class CityDomainServiceImpl implements ICityDomainService {
 	 * @return true if checkCity has all three fields matching with DB records
 	 *         otherwise return false
 	 */
-	private boolean isCityExisted(CityItem checkCity) 
-			throws CityServiceFailureException {
-		List<CityItem> existedCities = retrieveCitiesByName(checkCity.getCityName());
+	private boolean isCityExisted(CityItem checkCity, List<CityItem> existedCities) {
 		for (CityItem city : existedCities) {
 			if (city.getCityName() != null && 
 				(!city.getCityName().equals(checkCity.getCityName()))) {
@@ -208,6 +206,19 @@ public class CityDomainServiceImpl implements ICityDomainService {
 		return cityList;
 	}
 	
+	/**
+	 * Find the largest ID in a city list
+	 */
+	private Integer findLargestID(List<CityItem> cityList) {
+		Integer max = 0;
+		for (CityItem city : cityList) {
+			if (city.getCityID() != null && city.getCityID() > max) {
+				max = city.getCityID();
+			}
+		}
+		return max;
+	}
+	
 	/////////////////////////////////////////////////
 	//////// Domain Service implementation //////////
 	/////////////////////////////////////////////////
@@ -238,13 +249,13 @@ public class CityDomainServiceImpl implements ICityDomainService {
 			   "Invalid country name format.");
 		
 		// Check city name existed in the database
-		failIf(true == isCityExisted(city), 
+		List<CityItem> existedCities = retrieveCitiesByName(city.getCityName());
+		failIf(true == isCityExisted(city, existedCities), 
 			   CityServiceFailureReason.CITY_EXISTED,
 			   "The city already exists.");
 		
 		// Generate the ID based on the number of same named city in DB
-		List<CityItem> existedCities = retrieveCitiesByName(city.getCityName());
-		Integer newCityID = existedCities.size() + 1;
+		Integer newCityID = findLargestID(existedCities) + 1;
 		city.setCityID(newCityID);
 		
 		// Add the new city in database
