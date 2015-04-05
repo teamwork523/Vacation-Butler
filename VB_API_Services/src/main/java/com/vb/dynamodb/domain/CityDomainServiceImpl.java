@@ -10,7 +10,6 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.vb.dynamodb.model.CityItem;
-import com.vb.utility.VBNumberUtility;
 
 /**
  * The implementation of interface CityDAO
@@ -158,8 +157,10 @@ public class CityDomainServiceImpl implements ICityDomainService {
 	 * @return true if checkCity has all three fields matching with DB records
 	 *         otherwise return false
 	 */
-	private boolean isCityExisted(CityItem checkCity, List<CityItem> existsingCities) {
-		for (CityItem city : existsingCities) {
+	private boolean isCityExisted(CityItem checkCity) 
+			throws CityServiceFailureException {
+		List<CityItem> existedCities = retrieveCitiesByName(checkCity.getCityName());
+		for (CityItem city : existedCities) {
 			if (city.getCityName() != null && 
 				(!city.getCityName().equals(checkCity.getCityName()))) {
 				continue;
@@ -196,10 +197,12 @@ public class CityDomainServiceImpl implements ICityDomainService {
 			cityList = DynamoDBConnector.dynamoDBMapper.query(CityItem.class, queryExpression);
 		} catch (AmazonServiceException ase) {
 			failBecauseOfException(CityServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
-								   "Querying CityTable failed on server side.", ase);
+								   "Querying city name " + cityName + 
+								   " in CityTable failed on server side.", ase);
 		} catch (AmazonClientException ace) {
 			failBecauseOfException(CityServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
-					   			   "Querying CityTable failed on client side.", ace);
+					   			   "Querying city name " + cityName + 
+					   			   " in CityTable failed on client side.", ace);
 		}
 		
 		return cityList;
@@ -235,13 +238,13 @@ public class CityDomainServiceImpl implements ICityDomainService {
 			   "Invalid country name format.");
 		
 		// Check city name existed in the database
-		List<CityItem> existedCities = retrieveCitiesByName(city.getCityName());
-		failIf(true == isCityExisted(city, existedCities), 
+		failIf(true == isCityExisted(city), 
 			   CityServiceFailureReason.CITY_EXISTED,
 			   "The city already exists.");
 		
-		// Generate the new city ID
-		Integer newCityID = VBNumberUtility.getRandomInt();
+		// Generate the ID based on the number of same named city in DB
+		List<CityItem> existedCities = retrieveCitiesByName(city.getCityName());
+		Integer newCityID = existedCities.size() + 1;
 		city.setCityID(newCityID);
 		
 		// Add the new city in database
@@ -268,10 +271,22 @@ public class CityDomainServiceImpl implements ICityDomainService {
 	@Override
 	public List<CityItem> searchCitiesByName(String cityName) 
 			throws CityServiceFailureException {
-		// Validate inputs
+		
+		// Prevent Nulls
+		failIfArgumentNull("cityName", cityName);
+		
+		// Check for city name format
+		String storeCityName = convertToStoreLocationName(cityName);
+		failIf(false == isValidLocationName(storeCityName),
+			   CityServiceFailureReason.INVALID_CITY_NAME, 
+			   "Invalid city name format.");
 		
 		// Call DB
-		return retrieveCitiesByName(cityName);
+		List<CityItem> searchedCities = retrieveCitiesByName(storeCityName);
+		for (CityItem searchedCity : searchedCities) {
+			updateCityItemFieldsIntoDisplayedNames(searchedCity);
+		}
+		return searchedCities;
 	}
 
 	@Override

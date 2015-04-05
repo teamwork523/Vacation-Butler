@@ -39,35 +39,16 @@ public class CityCRUDAPIImpl implements ICityCRUDAPI {
 
 	@Override
 	public Response readCityByCityName(String cityName) {
-		return null;
-//		
-//		// validate input
-//		String cvtCityName = convertToStoreLocationName(cityName);
-//		ReadCityRs rcRs = new ReadCityRs();
-//		if (!isValidLocationName(cvtCityName)) {
-//			rcRs.setResultCode(LocationServiceResultMapper.resultCode(StatusType.INVALID_CITY_NAME));
-//			rcRs.setDebugInfo(LocationServiceResultMapper.toReason(StatusType.INVALID_CITY_NAME));
-//			return Response.status(Status.BAD_REQUEST).entity(rcRs).build();
-//		}
-//				
-//		// call DynamoDB
-//		try {
-//			List<CityItem> cities = dynamoDBDAO.searchCitiesByName(cvtCityName);
-//			// TODO: update the response object with Cities attribute
-//			return Response.ok().build();
-//		} catch (AmazonServiceException ase) {
-//			rcRs.setResultCode(LocationServiceResultMapper.resultCode(StatusType.AWS_DYNAMO_SERVER_ERROR));
-//			rcRs.setDebugInfo(LocationServiceResultMapper.toReason(StatusType.AWS_DYNAMO_SERVER_ERROR) +
-//						      System.lineSeparator() +
-//						      LocationServiceResultMapper.debugInfo(ase));
-//			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(rcRs).build();
-//		} catch (AmazonClientException ace) {
-//			rcRs.setResultCode(LocationServiceResultMapper.resultCode(StatusType.AWS_DYNAMO_CLIENT_ERROR));
-//			rcRs.setDebugInfo(LocationServiceResultMapper.toReason(StatusType.AWS_DYNAMO_CLIENT_ERROR) +
-//				      		  System.lineSeparator() +
-//				      		  LocationServiceResultMapper.debugInfo(ace));
-//			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(rcRs).build();
-//		}
+		try {
+			List<CityItem> cities = cityDomainService.searchCitiesByName(cityName);
+			ReadCityRs rcRs = new ReadCityRs(cities);
+			return Response.ok(rcRs).build();
+		} catch (Exception e) {
+			// TODO: add logging
+			ReadCityRs rcRs = new ReadCityRs(e);
+			Status st = LocationServiceResultMapper.httpStatus(e);
+			return Response.status(st).entity(rcRs).build();
+		}
 	}
 
 	@Override

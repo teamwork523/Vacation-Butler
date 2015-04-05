@@ -9,6 +9,7 @@
     <properties>
         <dropwizard.version>0.7.1</dropwizard.version>
         <aws.version>1.9.25</aws.version>
+        <jackson-annotations-version>2.4.2</jackson-annotations-version>
     </properties>
  
     <dependencies>
@@ -27,6 +28,11 @@
 	        <artifactId>commons-lang3</artifactId>
 	        <version>3.3.2</version>
 	    </dependency>
+	    <dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson-annotations-version}</version>
+		</dependency>
     </dependencies>
     
     <build>
