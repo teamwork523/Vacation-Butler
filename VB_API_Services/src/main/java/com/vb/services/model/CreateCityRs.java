@@ -1,6 +1,7 @@
 package com.vb.services.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vb.services.locations.api.LocationServiceResultMapper;
 
 /**
  * Create city API response object
@@ -74,4 +75,21 @@ public class CreateCityRs {
 		this.debugInfo = debugInfo;
 	}
 	
+	/**
+	 * Constructor for Success
+	 */
+	public CreateCityRs(Integer newCityID) {
+		this.cityID = newCityID;
+		this.resultCode = LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS;
+		this.debugInfo = null;
+	}
+	
+	/**
+	 * Constructor for Errors
+	 */
+	public CreateCityRs(Exception e) {
+		this.cityID = null;
+		this.resultCode = LocationServiceResultMapper.resultCode(e);
+		this.debugInfo = LocationServiceResultMapper.debugInfo(e);
+	}
 }
