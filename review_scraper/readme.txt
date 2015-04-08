@@ -16,10 +16,15 @@ Remove duplicate json entries (depend on data.json)
 1) enter "python remove_duplicate_json.py"
 2) the script will save the result in processed_data.json
 
-Get recommended length of visit from trip advisor (depend on processed_data.json)
-1) enter "python recommended_length_of_visit.py"
-2) the result is saved in recommended_length_of_visit.json
+Get detailed info from trip advisor (depend on processed_data.json)
+1) enter "python get_attraction_info.py"
+2) the result is saved in attraction_info.json
 
-Get opening hours (depend on processed_data.json)
-1) enter "python google_opening_hours.py"
-2) the result is saved in opening_hours.json
+Fields in attraction_info.json:
+
+name, category, city, region, country, street_address, zipcode, phone_number, longitude, latitude,
+rating, number_of_reviews, review_url, recommended_length_of_visit, hours
+
+example
+
+{"category": "Art Museums;Museums", "city": "Vancouver", "phone_number": "+1 604-682-3455", "name": "Bill Reid Gallery", "rating": "4.5 of 5 stars", "country": "Canada", "region": "British Columbia", "zipcode": "V6C 2G3", "longitude": "-123.11914", "hours": "Sunday: Closed Monday: Closed Tuesday: 11:00 am \u2013 5:00 pm Wednesday: 11:00 am \u2013 5:00 pm Thursday: 11:00 am \u2013 5:00 pm Friday: 11:00 am \u2013 5:00 pm Saturday: 11:00 am \u2013 5:00 pm", "number_of_reviews": "65", "recommended_length_of_visit": " 1-2 hours ", "latitude": "49.284576", "review_url": "/Attraction_Review-g154943-d1015074-Reviews-Bill_Reid_Gallery-Vancouver_British_Columbia.html", "street_address": "639 Hornby Street"}
