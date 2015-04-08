@@ -28,6 +28,7 @@ for name_index in range(len(names)):
     length_of_visit = tree.xpath('//b[text() = "Recommended length of visit:"]/following-sibling::text()')
     place = {}
     place["name"] = data[name_index]["name"][0]
+    print place["name"]
     place["review_url"] = review_urls[name_index]
     if length_of_visit == []:
         place["recommended_length_of_visit"] = "NA"
@@ -64,6 +65,41 @@ for name_index in range(len(names)):
         else:
             full_cat = category.text
     place["category"] = full_cat
+    rating = tree.xpath('//span[@class="rate sprite-rating_rr rating_rr"]//img/@alt')
+    if rating == []:
+        place["rating"] = "NA"
+    else:
+        place["rating"] = rating[0]
+    number_of_reviews = tree.xpath('//a[@href="#REVIEWS"]//span[@property="v:count"]')
+    if number_of_reviews == []:
+        place["number_of_reviews"] = "NA"
+    else:
+        place["number_of_reviews"] = number_of_reviews[0].text
+    longitude = tree.xpath('//div[@class="mapWrap"]//div[@class="mapContainer"]/@data-lng')
+    if longitude == []:
+        place["longitude"] = "NA"
+    else:
+        place["longitude"] = longitude[0]
+    latitude = tree.xpath('//div[@class="mapWrap"]//div[@class="mapContainer"]/@data-lat')
+    if latitude == []:
+        place["latitude"] = "NA"
+    else:
+        place["latitude"] = latitude[0]
+    street_address = tree.xpath('//span[@class="street-address"]')
+    if street_address == []:
+        place["street_address"] = "NA"
+    else:
+        place["street_address"] = street_address[0].text
+    zipcode = tree.xpath('//span[@property="v:postal-code"]')
+    if zipcode == []:
+        place["zipcode"] = "NA"
+    else:
+        place["zipcode"] = zipcode[0].text
+    phone_number = tree.xpath('//div[@class="phoneNumber"]')
+    if phone_number == []:
+        place["phone_number"] = "NA"
+    else:
+        place["phone_number"] = phone_number[0].text.replace('Phone Number: ', '')
     google_query = "https://www.google.com/search?q=" + names[name_index]
     soup = BeautifulSoup(opener.open(google_query).read())
     opening_hours = soup.find_all("span", {"class" : "loht__open-interval"})
