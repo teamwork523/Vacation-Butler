@@ -7,9 +7,12 @@
     <version>0.0.1-SNAPSHOT</version>
     
     <properties>
-        <dropwizard.version>0.7.1</dropwizard.version>
+        <apache-common-lang3-version>3.3.2</apache-common-lang3-version>
         <aws.version>1.9.25</aws.version>
+        <dropwizard.version>0.7.1</dropwizard.version>
+        <easymock-version>3.3.1</easymock-version>
         <jackson-annotations-version>2.4.2</jackson-annotations-version>
+        <junit-version>4.12</junit-version>
     </properties>
  
     <dependencies>
@@ -26,13 +29,27 @@
 	    <dependency>
 	        <groupId>org.apache.commons</groupId>
 	        <artifactId>commons-lang3</artifactId>
-	        <version>3.3.2</version>
+	        <version>${apache-common-lang3-version}</version>
 	    </dependency>
 	    <dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson-annotations-version}</version>
 		</dependency>
+		
+		<!-- For Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>${easymock-version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     
     <build>

@@ -15,7 +15,7 @@ import com.vb.services.model.UpdateCityRq;
 public class CityCRUDAPIImpl implements ICityCRUDAPI {
 	
 	// TODO: Use Spring Injection here
-	private CityDomainServiceImpl cityDomainService = new CityDomainServiceImpl();
+	protected CityDomainServiceImpl cityDomainService;
 
 	//////////////////////////////////////
 	//////// API implementation //////////
