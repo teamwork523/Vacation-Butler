@@ -2,6 +2,8 @@ package com.vb.services.locations.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.easymock.EasyMock.isA;
 
 import javax.ws.rs.core.Response;
@@ -13,6 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.vb.dynamodb.domain.CityDomainServiceImpl;
+import com.vb.dynamodb.domain.ICityDomainService.CityServiceFailureException;
+import com.vb.dynamodb.domain.ICityDomainService.CityServiceFailureReason;
 import com.vb.dynamodb.model.CityItem;
 import com.vb.services.model.CreateCityRq;
 import com.vb.services.model.CreateCityRs;
@@ -24,8 +28,8 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 	private static final int HTTP_STATUS_BAD_REQUEST = Status.BAD_REQUEST.getStatusCode();
 	private static final int HTTP_STATUS_INTERNAL_SERVER_ERROR = Status.INTERNAL_SERVER_ERROR.getStatusCode();
 	
-	private CityDomainServiceImpl m_cityDomainService;
 	private CityCRUDAPIImpl m_cityCRUDAPI;
+	private CityDomainServiceImpl m_cityDomainService;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -34,20 +38,10 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		m_cityCRUDAPI.cityDomainService = m_cityDomainService;
 	}
 	
-	/**
-	 * Helper to instantiate the API with domain service mock
-	 */
-//	protected CityCRUDAPIImpl createCityCRUDAPIImpl() {
-//		CityDomainServiceImpl m_cityDomainService = createMock(CityDomainServiceImpl.class);
-//		CityCRUDAPIImpl m_cityCRUDAPI = new CityCRUDAPIImpl();
-//		m_cityCRUDAPI.setCityDomainService(m_cityDomainService);
-//		return m_cityCRUDAPI;
-//	}
-//	
 	////////////////////////////////////////////////
 	// Create a new city
 	/**
-	 * Test Happy Path
+	 * Test the OK case for create city API
 	 */
 	@Test
 	public void createCity_HappyPath() throws Exception {
@@ -77,6 +71,84 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		assertNotNull(data);
 		assertEquals(LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS, data.getResultCode());
 		assertEquals(resultCity.getCityID(), data.getCityID());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	/**
+	 * Test when the city name is invalid
+	 * @throws Exception
+	 */
+	@Test
+	public void createCity_InvalidCityName() throws Exception {
+		
+		// Test data
+		String invalidCityName = "#$%^&InvalidName123", 
+			   testStateName = "Test State",
+			   testCountryName = "Test Country";
+		CityServiceFailureReason reason = CityServiceFailureReason.INVALID_CITY_NAME;
+		CityServiceFailureException ex = new CityServiceFailureException(reason);
+		
+		// Setup Mock
+		EasyMock.expect(m_cityCRUDAPI.cityDomainService.addCity(isA(CityItem.class))).andThrow(ex);
+		replayAll();
+		
+		// Create request object
+		CreateCityRq rq = new CreateCityRq(invalidCityName, testStateName, testCountryName);
+		
+		// Make the call
+		Response rs = m_cityCRUDAPI.createCity(rq);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_BAD_REQUEST, rs.getStatus());
+		CreateCityRs data = (CreateCityRs) rs.getEntity();
+		assertNotNull(data);
+		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
+		assertNotNull(data.getDebugInfo());
+		assertTrue(data.getDebugInfo().contains(reason.toString()));
+		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
+		assertNull(data.getCityID());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	/**
+	 * Test when AWS server service is down
+	 * @throws Exception
+	 */
+	@Test
+	public void createCity_AWSServerSideError() throws Exception {
+		
+		// Test data
+		String testCityName = "Test City", 
+			   testStateName = "Test State",
+			   testCountryName = "Test Country";
+		CityServiceFailureReason reason = CityServiceFailureReason.AWS_DYNAMO_SERVER_ERROR;
+		CityServiceFailureException ex = new CityServiceFailureException(reason);
+		
+		// Setup Mock
+		EasyMock.expect(m_cityCRUDAPI.cityDomainService.addCity(isA(CityItem.class))).andThrow(ex);
+		replayAll();
+		
+		// Create request object
+		CreateCityRq rq = new CreateCityRq(testCityName, testStateName, testCountryName);
+		
+		// Make the call
+		Response rs = m_cityCRUDAPI.createCity(rq);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_INTERNAL_SERVER_ERROR, rs.getStatus());
+		CreateCityRs data = (CreateCityRs) rs.getEntity();
+		assertNotNull(data);
+		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
+		assertNotNull(data.getDebugInfo());
+		assertTrue(data.getDebugInfo().contains(reason.toString()));
+		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
+		assertNull(data.getCityID());
 		
 		// Check the mocks
 		verifyAll();
