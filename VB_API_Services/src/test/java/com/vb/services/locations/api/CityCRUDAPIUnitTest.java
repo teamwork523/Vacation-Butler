@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.easymock.EasyMock.isA;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -20,6 +23,7 @@ import com.vb.dynamodb.domain.ICityDomainService.CityServiceFailureReason;
 import com.vb.dynamodb.model.CityItem;
 import com.vb.services.model.CreateCityRq;
 import com.vb.services.model.CreateCityRs;
+import com.vb.services.model.ReadCityRs;
 
 public class CityCRUDAPIUnitTest extends EasyMockSupport {
 	
@@ -153,4 +157,114 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		// Check the mocks
 		verifyAll();
 	}
+	
+	////////////////////////////////////////////////
+	// Read a city by city name
+	/**
+	* Test the OK case for read city API
+	*/
+	@Test
+	public void readCity_HappyPath() throws Exception {
+	
+		// Test data
+		String testCityName = "Test City", 
+			   testStateName = "Test State",
+			   testCountryName = "Test Country";
+		Integer testCityID = 1;
+		CityItem resultCity = new CityItem(testCityName, testStateName, testCountryName);
+		resultCity.setCityID(testCityID);
+		List<CityItem> cityList = new ArrayList<CityItem>();
+		cityList.add(resultCity);
+		
+		// Setup Mock
+		EasyMock.expect(m_cityCRUDAPI.cityDomainService.searchCitiesByName(testCityName)).andReturn((List<CityItem>)cityList);
+		replayAll();
+		
+		// Make the call
+		Response rs = m_cityCRUDAPI.readCityByCityName(testCityName);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_OK, rs.getStatus());
+		ReadCityRs data = (ReadCityRs) rs.getEntity();
+		assertNotNull(data);
+		assertEquals(LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS, data.getResultCode());
+		assertEquals(1, data.getCityList().size());
+		assertEquals(testCityID, data.getCityList().get(0).getCityID());
+		assertEquals(testCityName, data.getCityList().get(0).getCityName());
+		assertEquals(testStateName, data.getCityList().get(0).getStateName());
+		assertEquals(testCountryName, data.getCityList().get(0).getCountryName());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	/**
+	* Test when the city name is invalid
+	* @throws Exception
+	*/
+	@Test
+	public void readCity_InvalidCityName() throws Exception {
+	
+		// Test data
+		String invalidCityName = "#$%^&InvalidName123";
+		CityServiceFailureReason reason = CityServiceFailureReason.INVALID_CITY_NAME;
+		CityServiceFailureException ex = new CityServiceFailureException(reason);
+		
+		// Setup Mock
+		EasyMock.expect(m_cityCRUDAPI.cityDomainService.searchCitiesByName(invalidCityName)).andThrow(ex);
+		replayAll();
+		
+		// Make the call
+		Response rs = m_cityCRUDAPI.readCityByCityName(invalidCityName);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_BAD_REQUEST, rs.getStatus());
+		ReadCityRs data = (ReadCityRs) rs.getEntity();
+		assertNotNull(data);
+		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
+		assertNotNull(data.getDebugInfo());
+		assertTrue(data.getDebugInfo().contains(reason.toString()));
+		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
+		assertNull(data.getCityList());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	/**
+	* Test when AWS server service is down
+	* @throws Exception
+	*/
+	@Test
+	public void readCity_AWSServerSideError() throws Exception {
+	
+		// Test data
+		String testCityName = "Test City";
+		CityServiceFailureReason reason = CityServiceFailureReason.AWS_DYNAMO_SERVER_ERROR;
+		CityServiceFailureException ex = new CityServiceFailureException(reason);
+		
+		// Setup Mock
+		EasyMock.expect(m_cityCRUDAPI.cityDomainService.searchCitiesByName(testCityName)).andThrow(ex);
+		replayAll();
+		
+		// Make the call
+		Response rs = m_cityCRUDAPI.readCityByCityName(testCityName);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_INTERNAL_SERVER_ERROR, rs.getStatus());
+		ReadCityRs data = (ReadCityRs) rs.getEntity();
+		assertNotNull(data);
+		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
+		assertNotNull(data.getDebugInfo());
+		assertTrue(data.getDebugInfo().contains(reason.toString()));
+		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
+		assertNull(data.getCityList());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
 }
