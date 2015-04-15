@@ -15,7 +15,7 @@ req = urllib2.Request(url)
 req.add_header('Content-Type', 'application/json')
 
 try:
-    response = urllib2.urlopen(req, json.dumps(data))
+    response = urllib2.urlopen(req, json.dumps(data)).read()
 except urllib2.HTTPError, e:
     if e.getcode() == 500 or e.getcode() == 400:
         response = e.read()
