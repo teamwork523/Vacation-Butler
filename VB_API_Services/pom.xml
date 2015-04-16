@@ -13,6 +13,7 @@
         <easymock-version>3.3.1</easymock-version>
         <jackson-annotations-version>2.4.2</jackson-annotations-version>
         <junit-version>4.12</junit-version>
+        <powermock.version>1.6.2</powermock.version>
     </properties>
  
     <dependencies>
@@ -48,6 +49,18 @@
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <version>${easymock-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-easymock</artifactId>
+            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

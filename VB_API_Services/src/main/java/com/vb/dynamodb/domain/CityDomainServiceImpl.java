@@ -179,7 +179,7 @@ public class CityDomainServiceImpl implements ICityDomainService {
 	/**
 	 * Retrieve matched cities based on city name
 	 */
-	private List<CityItem> retrieveCitiesByName(String cityName) 
+	protected List<CityItem> retrieveCitiesByName(String cityName) 
 		throws CityServiceFailureException {
 		CityItem cityKey = new CityItem();
 		cityKey.setCityName(cityName);
