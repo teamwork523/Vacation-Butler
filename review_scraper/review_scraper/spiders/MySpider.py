@@ -7,10 +7,11 @@ from review_scraper.items import ReviewScraperItem
 class MySpider(CrawlSpider):
     name = 'myspider'
     allowed_domains = ['tripadvisor.ca']
-    #raw_file = open('city_urls.json')
-    #raw_data = raw_file.read()
-    #start_urls = json.loads(raw_data)
-    start_urls = ['http://www.tripadvisor.ca/Attractions-g154943-Activities-Vancouver_British_Columbia.html']
+    raw_file = open('city_urls.json')
+    raw_data = raw_file.read()
+    start_urls = json.loads(raw_data)
+    raw_file.close()
+    #start_urls = ['http://www.tripadvisor.ca/Attractions-g154943-Activities-Vancouver_British_Columbia.html']
 
     rules = (
         # Extract all links that have the word 'Attractions-' and parse them with the callback function parse_item
