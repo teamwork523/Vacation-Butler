@@ -8,6 +8,7 @@ from types import NoneType
 from bs4 import BeautifulSoup
 import time
 import sys
+import os
 
 json_data=open('processed_data.json')
 
@@ -20,10 +21,23 @@ for num in range(len(data)):
 
 opener = urllib2.build_opener()
 opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10) AppleWebKit/600.1.25 (KHTML, like Gecko) Version/8.0 Safari/600.1.25')]
-final_list = []
+outfile = open("attraction_info.json", "r")
+final_list = json.load(outfile) # resume downloads
+existing_set_url = set() # create a set of existing url to avoid duplicate queries
+count_exist = 0
+if len(final_list) > 0:
+    for item in final_list:
+        existing_set_url.add(item["review_url"])
+        count_exist += 1
+    print "number of existing entries: " + str(count_exist)
+outfile.close() #close the read file
+
 outfile = open("attraction_info.json", "w")
 try:
     for name_index in range(len(names)):
+        if count_exist>0:
+            if review_urls[name_index] in existing_set_url: # already in the set
+                continue
         query_url = "http://www.tripadvisor.ca" + review_urls[name_index]
         htmlparser = etree.HTMLParser()
         tree = etree.parse(opener.open(query_url), htmlparser)
@@ -112,6 +126,7 @@ try:
         final_list.append(place)
         #time.sleep(1) #to avoid blacklist
 except:
+    print str(final_list)
     json.dump(final_list, outfile)
     json_data.close()
     outfile.close()
