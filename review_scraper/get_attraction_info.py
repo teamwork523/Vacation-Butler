@@ -10,6 +10,10 @@ import time
 import sys
 import os
 
+num_entries_before_sleep = 15
+sleep_time = 5
+output_file_name = "attraction_info.json"
+
 json_data=open('processed_data.json')
 
 data = json.load(json_data)
@@ -20,24 +24,34 @@ for num in range(len(data)):
     review_urls.append(data[num]["review_url"][0])
 
 opener = urllib2.build_opener()
-opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10) AppleWebKit/600.1.25 (KHTML, like Gecko) Version/8.0 Safari/600.1.25')]
-outfile = open("attraction_info.json", "r")
-final_list = json.load(outfile) # resume downloads
+opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:37.0) Gecko/20100101 Firefox/37.0'),('Accept-Language', 'en-US,en;q=0.5'),('Accept-Encoding', 'gzip, deflate')]
+
 existing_set_url = set() # create a set of existing url to avoid duplicate queries
 count_exist = 0
-if len(final_list) > 0:
-    for item in final_list:
-        existing_set_url.add(item["review_url"])
-        count_exist += 1
-    print "number of existing entries: " + str(count_exist)
-outfile.close() #close the read file
+final_list = [] # this will store the final result
+if os.path.isfile(output_file_name): #if the file already exists
+    outfile = open("attraction_info.json", "r")
+    final_list = json.load(outfile) # resume downloads
+    if len(final_list) > 0:
+        for item in final_list:
+            existing_set_url.add(item["review_url"])
+            count_exist += 1
+        print "number of existing entries: " + str(count_exist)
+    outfile.close() #close the read file
 
 outfile = open("attraction_info.json", "w")
+sleep_count = 0;
 try:
     for name_index in range(len(names)):
         if count_exist>0:
             if review_urls[name_index] in existing_set_url: # already in the set
                 continue
+        if sleep_count > num_entries_before_sleep:
+            print "sleeping"
+            time.sleep(sleep_time)
+            sleep_count = 0
+        else:
+            sleep_count += 1
         query_url = "http://www.tripadvisor.ca" + review_urls[name_index]
         htmlparser = etree.HTMLParser()
         tree = etree.parse(opener.open(query_url), htmlparser)
@@ -126,7 +140,6 @@ try:
         final_list.append(place)
         #time.sleep(1) #to avoid blacklist
 except:
-    print str(final_list)
     json.dump(final_list, outfile)
     json_data.close()
     outfile.close()
