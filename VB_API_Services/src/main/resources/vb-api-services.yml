@@ -1,0 +1,24 @@
+# Logging settings.
+logging:
+
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+
+  # Logger-specific levels.
+  loggers:
+
+    # Sets the level for 'com.vb' to DEBUG.
+    com.vb: DEBUG
+  
+  # Appenders specify logging destinations
+  # TODO: Create MDC %X{context}, e.g. client to help trouble shooting 
+  appenders:
+    - type: console
+      threshold: ALL
+      logFormat: "%-6level [%d{yyyy-MM-dd'T'HH:mm:ss.SSS 'PST', PST}] [%t] %logger - %msg %n"
+    - type: file
+      threshold: DEBUG
+      logFormat: "%-6level [%d{yyyy-MM-dd'T'HH:mm:ss.SSS 'UTC', UTC}] [%t] %logger{5} - %msg %n"
+      currentLogFilename: /var/log/vb/vb-api-services.log
+      archivedLogFilenamePattern: /var/log/vb/vb-api-services-%d{yyyy-MM-dd}.log
+      archivedFileCount: 10
