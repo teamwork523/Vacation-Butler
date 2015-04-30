@@ -12,8 +12,8 @@ import sys
 import os
 
 urllib3.disable_warnings()
-num_entries_before_sleep = 1
-sleep_time = 3
+num_entries_before_sleep = 3
+sleep_time = 2
 output_file_name = "attraction_info.json"
 
 json_data=open('processed_data.json')
@@ -100,6 +100,20 @@ try:
             else:
                 full_cat = category.text
         place["category"] = full_cat
+        activities = tree.xpath('//div[@class="map_and_details"]//div[@class="detail_section details"]//b[text()="Activities:"]/following-sibling::text()')
+        if activities == []:
+            place["activities"] = "NA"
+        else:
+            place["activities"] = activities[0].strip('\r\n')
+        days_open = tree.xpath('//div[@id="HOUR_OVERLAY_CONTENTS"]//span[@class="days"]')
+        hours_open = tree.xpath('//div[@id="HOUR_OVERLAY_CONTENTS"]//span[@class="hours"]')
+        hours = '';
+        if days_open == []:
+            hours = "NA"
+        else:
+            for i in range(len(days_open)):
+                hours += days_open[i].text.strip('\r\n') + ' ' + hours_open[i].text.strip('\r\n') + '; '
+        place["hours"] = hours
         rating = tree.xpath('//span[@class="rate sprite-rating_rr rating_rr"]//img/@alt')
         if rating == []:
             place["rating"] = "NA"
@@ -113,13 +127,11 @@ try:
         longitude = tree.xpath('//div[@class="mapWrap"]//div[@class="mapContainer"]/@data-lng')
         if longitude == []:
             place["longitude"] = "NA"
-            raise ValueError('Cannot find the longitude')
         else:
             place["longitude"] = longitude[0]
         latitude = tree.xpath('//div[@class="mapWrap"]//div[@class="mapContainer"]/@data-lat')
         if latitude == []:
             place["latitude"] = "NA"
-            raise ValueError('Cannot find the latitude')
         else:
             place["latitude"] = latitude[0]
         street_address = tree.xpath('//span[@class="street-address"]')
@@ -137,16 +149,15 @@ try:
             place["phone_number"] = "NA"
         else:
             place["phone_number"] = phone_number[0].text.replace('Phone Number: ', '')
-        google_query = "https://www.google.com/search?q=" + names[name_index]
-        r = http.request('GET', google_query)
-        soup = BeautifulSoup(r.data)
-        opening_hours = soup.find_all("span", {"class" : "loht__open-interval"})
-        if opening_hours == []:
-            place["hours"] = "NA"
-        else:
-            place["hours"] = "Sunday: " + opening_hours[0].text + " Monday: " + opening_hours[1].text + " Tuesday: " + opening_hours[2].text + " Wednesday: " + opening_hours[3].text + " Thursday: " + opening_hours[4].text + " Friday: " + opening_hours[5].text + " Saturday: " + opening_hours[6].text
+##        google_query = "https://www.google.com/search?q=" + names[name_index]
+##        r = http.request('GET', google_query)
+##        soup = BeautifulSoup(r.data)
+##        opening_hours = soup.find_all("span", {"class" : "loht__open-interval"})
+##        if opening_hours == []:
+##            place["hours"] = "NA"
+##        else:
+##            place["hours"] = "Sunday: " + opening_hours[0].text + " Monday: " + opening_hours[1].text + " Tuesday: " + opening_hours[2].text + " Wednesday: " + opening_hours[3].text + " Thursday: " + opening_hours[4].text + " Friday: " + opening_hours[5].text + " Saturday: " + opening_hours[6].text
         final_list.append(place)
-        #time.sleep(1) #to avoid blacklist
 except:
     json.dump(final_list, outfile)
     json_data.close()
