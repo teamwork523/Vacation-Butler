@@ -1,4 +1,4 @@
-Require scrapy 24.4, selenium 2.44, and Firefox
+Require scrapy 24.4, selenium 2.45, and Firefox
 sudo pip install scrapy
 sudo pip install selenium
 
@@ -23,8 +23,8 @@ Get detailed info from trip advisor (depend on processed_data.json)
 Fields in attraction_info.json:
 
 name, category, city, region, country, street_address, zipcode, phone_number, longitude, latitude,
-rating, number_of_reviews, review_url, recommended_length_of_visit, hours
+rating, number_of_reviews, review_url, recommended_length_of_visit, hours, activities
 
 example
 
-{"category": "Art Museums;Museums", "city": "Vancouver", "phone_number": "+1 604-682-3455", "name": "Bill Reid Gallery", "rating": "4.5 of 5 stars", "country": "Canada", "region": "British Columbia", "zipcode": "V6C 2G3", "longitude": "-123.11914", "hours": "Sunday: Closed Monday: Closed Tuesday: 11:00 am \u2013 5:00 pm Wednesday: 11:00 am \u2013 5:00 pm Thursday: 11:00 am \u2013 5:00 pm Friday: 11:00 am \u2013 5:00 pm Saturday: 11:00 am \u2013 5:00 pm", "number_of_reviews": "65", "recommended_length_of_visit": " 1-2 hours ", "latitude": "49.284576", "review_url": "/Attraction_Review-g154943-d1015074-Reviews-Bill_Reid_Gallery-Vancouver_British_Columbia.html", "street_address": "639 Hornby Street"}
+{"category": "Speciality Museums;Museums", "city": "Lethbridge", "phone_number": "403-320.3898", "rating": "4.0 of 5 stars", "name": "Galt Museum &amp; Archives", "activities": "NA", "country": "Canada", "region": "Alberta", "zipcode": "T1J 0P6", "longitude": "-112.8467", "hours": "Sun 13:00 - 17:00; Mon - Wed 10:00 - 17:00; Thu 10:00 - 21:00; Fri - Sat 10:00 - 17:00; ", "number_of_reviews": "61", "recommended_length_of_visit": "NA", "latitude": "49.692493", "review_url": "/Attraction_Review-g154919-d1095898-Reviews-Galt_Museum_Archives-Lethbridge_Alberta.html", "street_address": "502 - 1st Street South"}
