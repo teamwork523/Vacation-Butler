@@ -26,7 +26,7 @@ for num in range(len(data)):
     review_urls.append(data[num]["review_url"][0])
 
 opener = urllib2.build_opener()
-opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:37.0) Gecko/20100101 Firefox/37.0'),('Accept-Language', 'en-US,en;q=0.5'),('Accept-Encoding', 'gzip, deflate')]
+opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:37.0) Gecko/20100101 Firefox/37.0')]
 
 existing_set_url = set() # create a set of existing url to avoid duplicate queries
 count_exist = 0
@@ -74,11 +74,13 @@ try:
         city_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'City\'")]')
         if city_name == []:
             place["city"] = "NA"
+            raise ValueError('Cannot find the city name')
         else:
             place["city"] = city_name[0].find('span').text
         country_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'Country\'")]')
         if country_name == []:
             place["country"] = "NA"
+            raise ValueError('Cannot find the country name')
         else:
             place["country"] = country_name[0].find('span').text
         region_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'State\'")]')
@@ -111,11 +113,13 @@ try:
         longitude = tree.xpath('//div[@class="mapWrap"]//div[@class="mapContainer"]/@data-lng')
         if longitude == []:
             place["longitude"] = "NA"
+            raise ValueError('Cannot find the longitude')
         else:
             place["longitude"] = longitude[0]
         latitude = tree.xpath('//div[@class="mapWrap"]//div[@class="mapContainer"]/@data-lat')
         if latitude == []:
             place["latitude"] = "NA"
+            raise ValueError('Cannot find the latitude')
         else:
             place["latitude"] = latitude[0]
         street_address = tree.xpath('//span[@class="street-address"]')
