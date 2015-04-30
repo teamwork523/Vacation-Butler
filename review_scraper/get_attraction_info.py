@@ -1,6 +1,7 @@
 import json
 import urllib
 import urllib2
+import urllib3
 import string
 from lxml import etree
 import re
@@ -10,8 +11,9 @@ import time
 import sys
 import os
 
-num_entries_before_sleep = 15
-sleep_time = 5
+urllib3.disable_warnings()
+num_entries_before_sleep = 1
+sleep_time = 3
 output_file_name = "attraction_info.json"
 
 json_data=open('processed_data.json')
@@ -42,11 +44,12 @@ if os.path.isfile(output_file_name): #if the file already exists
 outfile = open("attraction_info.json", "w")
 sleep_count = 0;
 try:
+    http = urllib3.PoolManager()
     for name_index in range(len(names)):
         if count_exist>0:
             if review_urls[name_index] in existing_set_url: # already in the set
                 continue
-        if sleep_count > num_entries_before_sleep:
+        if sleep_count >= num_entries_before_sleep:
             print "sleeping"
             time.sleep(sleep_time)
             sleep_count = 0
@@ -131,7 +134,8 @@ try:
         else:
             place["phone_number"] = phone_number[0].text.replace('Phone Number: ', '')
         google_query = "https://www.google.com/search?q=" + names[name_index]
-        soup = BeautifulSoup(opener.open(google_query).read())
+        r = http.request('GET', google_query)
+        soup = BeautifulSoup(r.data)
         opening_hours = soup.find_all("span", {"class" : "loht__open-interval"})
         if opening_hours == []:
             place["hours"] = "NA"
