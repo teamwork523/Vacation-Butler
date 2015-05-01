@@ -75,8 +75,12 @@ try:
         if city_name == []:
             city_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'Municipality\'")]')
             if city_name == []:
-                place["city"] = "NA"
-                raise ValueError('Cannot find the city name')
+                city_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'Island\'")]')
+                if city_name == []:
+                    place["city"] = "NA"
+                    raise ValueError('Cannot find the city name')
+                else:
+                    place["city"] = city_name[0].find('span').text
             else:
                 place["city"] = city_name[0].find('span').text
         else:
