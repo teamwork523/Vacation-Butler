@@ -73,8 +73,12 @@ try:
                 place["recommended_length_of_visit"] = "NA"
         city_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'City\'")]')
         if city_name == []:
-            place["city"] = "NA"
-            raise ValueError('Cannot find the city name')
+            city_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'Municipality\'")]')
+            if city_name == []:
+                place["city"] = "NA"
+                raise ValueError('Cannot find the city name')
+            else:
+                place["city"] = city_name[0].find('span').text
         else:
             place["city"] = city_name[0].find('span').text
         country_name = tree.xpath('//a[contains(@onclick, "ta.setEvtCookie(\'Breadcrumbs\', \'click\', \'Country\'")]')
