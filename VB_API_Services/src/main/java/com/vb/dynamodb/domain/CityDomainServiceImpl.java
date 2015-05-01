@@ -10,6 +10,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.vb.dynamodb.model.CityItem;
+import com.vb.services.logging.VBLogger;
 
 /**
  * The implementation of interface CityDAO
@@ -20,6 +21,8 @@ import com.vb.dynamodb.model.CityItem;
 // TODO: Add Spring annotation
 public class CityDomainServiceImpl implements ICityDomainService {
 
+	private static final VBLogger LOGGER = VBLogger.getLogger(CityDomainServiceImpl.class);
+	
 	/////////////////////////////////////////////////
 	////////////// Failure Reporting ////////////////
 	/////////////////////////////////////////////////
@@ -41,6 +44,7 @@ public class CityDomainServiceImpl implements ICityDomainService {
 		throws CityServiceFailureException {
 		if (condition) {
 			CityServiceFailureException e = new CityServiceFailureException(reason, message);
+			LOGGER.warn("CityServiceFailureException", e);
 			throw e;
 		}
 	}
@@ -74,6 +78,7 @@ public class CityDomainServiceImpl implements ICityDomainService {
 			                                     String message, Throwable cause) 
 		throws CityServiceFailureException {
 		CityServiceFailureException e = new CityServiceFailureException(reason, message, cause);
+		LOGGER.error("CityServiceFailureException", e);
 		throw e;
 	}
 	
@@ -229,6 +234,8 @@ public class CityDomainServiceImpl implements ICityDomainService {
 	public CityItem addCity(CityItem city) 
 			throws CityServiceFailureException {
 		
+		LOGGER.info("Calling Domain Add City");
+		
 		// Prevent nulls
 		failIfArgumentNull("cityName", city.getCityName());
 		failIfArgumentNull("stateName", city.getStateName());
@@ -282,6 +289,8 @@ public class CityDomainServiceImpl implements ICityDomainService {
 	@Override
 	public List<CityItem> searchCitiesByName(String cityName) 
 			throws CityServiceFailureException {
+		
+		LOGGER.debug("Calling Domain Search City");
 		
 		// Prevent Nulls
 		failIfArgumentNull("cityName", cityName);

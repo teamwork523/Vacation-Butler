@@ -1,7 +1,8 @@
 package com.vb.services.logging;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
 
 /**
  * A uniform logging class for all the VB logging
@@ -29,11 +30,11 @@ public class VBLogger {
 	// private construction
 	///////////////////////////
 	private VBLogger(String name) {
-		logger = LoggerFactory.getLogger(name);
+		logger = (Logger)LoggerFactory.getLogger(name);
 	}
 
 	private VBLogger(Class<?> clazz) {
-		logger = LoggerFactory.getLogger(clazz);
+		logger = (Logger)LoggerFactory.getLogger(clazz);
 	}
 	
 	///////////////////////////
