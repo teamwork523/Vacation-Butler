@@ -71,7 +71,7 @@ public interface ICityDomainService {
 	 * @param cityID
 	 * @return
 	 */
-	List<CityItem> searchCitiesByName(String cityName) throws CityServiceFailureException ;
+	List<CityItem> searchCitiesByCityName(String cityName) throws CityServiceFailureException ;
 	
 	/**
 	 * Update the city information based on name and ID

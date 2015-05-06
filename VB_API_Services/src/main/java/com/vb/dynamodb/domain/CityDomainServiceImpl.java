@@ -22,6 +22,11 @@ import com.vb.services.logging.VBLogger;
 public class CityDomainServiceImpl implements ICityDomainService {
 
 	private static final VBLogger LOGGER = VBLogger.getLogger(CityDomainServiceImpl.class);
+	private static final String STATE_NAME_INDEX_NAME = "StateName-index";
+	private static final String COUNTRY_NAME_INDEX_NAME = "CountryName-index";
+	public enum NameType {CITY_NAME_TYPE, 
+						  STATE_NAME_TYPE,
+						  COUNTRY_NAME_TYPE};
 	
 	/////////////////////////////////////////////////
 	////////////// Failure Reporting ////////////////
@@ -183,16 +188,33 @@ public class CityDomainServiceImpl implements ICityDomainService {
 	
 	/**
 	 * Retrieve matched cities based on city name
+	 * @param nameType
 	 */
-	protected List<CityItem> retrieveCitiesByName(String cityName) 
+	protected List<CityItem> retrieveCitiesByName(String name, NameType nameType) 
 		throws CityServiceFailureException {
 		CityItem cityKey = new CityItem();
-		cityKey.setCityName(cityName);
-		
-		// query with city name hash key
-		DynamoDBQueryExpression<CityItem> queryExpression = 
-				new DynamoDBQueryExpression<CityItem>()
-			        .withHashKeyValues(cityKey);
+		// query with name as hash key or index key
+		DynamoDBQueryExpression<CityItem> queryExpression = null;
+		if (nameType == NameType.CITY_NAME_TYPE) {
+			cityKey.setCityName(name);
+			queryExpression = new DynamoDBQueryExpression<CityItem>()
+			        		      .withHashKeyValues(cityKey);
+		} else if (nameType == NameType.STATE_NAME_TYPE) {
+			cityKey.setStateName(name);
+			queryExpression = new DynamoDBQueryExpression<CityItem>()
+      		      				  .withIndexName(STATE_NAME_INDEX_NAME)
+      		      				  .withHashKeyValues(cityKey);
+			// GSI doesn't support consistent read
+			queryExpression.setConsistentRead(false);
+		} else {
+			cityKey.setCountryName(name);
+			queryExpression = new DynamoDBQueryExpression<CityItem>()
+			      				  .withIndexName(COUNTRY_NAME_INDEX_NAME)
+			      				  .withHashKeyValues(cityKey);
+			// GSI doesn't support consistent read
+			queryExpression.setConsistentRead(false);
+		}
+				
 		
 		// Calling DB
 		List<CityItem> cityList = null;
@@ -200,11 +222,11 @@ public class CityDomainServiceImpl implements ICityDomainService {
 			cityList = DynamoDBConnector.dynamoDBMapper.query(CityItem.class, queryExpression);
 		} catch (AmazonServiceException ase) {
 			failBecauseOfException(CityServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
-								   "Querying city name " + cityName + 
+								   "Querying name " + name + 
 								   " in CityTable failed on server side.", ase);
 		} catch (AmazonClientException ace) {
 			failBecauseOfException(CityServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
-					   			   "Querying city name " + cityName + 
+					   			   "Querying name " + name + 
 					   			   " in CityTable failed on client side.", ace);
 		}
 		
@@ -256,7 +278,7 @@ public class CityDomainServiceImpl implements ICityDomainService {
 			   "Invalid country name format.");
 		
 		// Check city name existed in the database
-		List<CityItem> existedCities = retrieveCitiesByName(city.getCityName());
+		List<CityItem> existedCities = retrieveCitiesByName(city.getCityName(), NameType.CITY_NAME_TYPE);
 		failIf(true == isCityExisted(city, existedCities), 
 			   CityServiceFailureReason.CITY_EXISTED,
 			   "The city already exists.");
@@ -287,7 +309,7 @@ public class CityDomainServiceImpl implements ICityDomainService {
 	 * @return a list of city items
 	 */
 	@Override
-	public List<CityItem> searchCitiesByName(String cityName) 
+	public List<CityItem> searchCitiesByCityName(String cityName) 
 			throws CityServiceFailureException {
 		
 		LOGGER.debug("Calling Domain Search City");
@@ -302,7 +324,7 @@ public class CityDomainServiceImpl implements ICityDomainService {
 			   "Invalid city name format.");
 		
 		// Call DB
-		List<CityItem> searchedCities = retrieveCitiesByName(storeCityName);
+		List<CityItem> searchedCities = retrieveCitiesByName(storeCityName, NameType.CITY_NAME_TYPE);
 		for (CityItem searchedCity : searchedCities) {
 			updateCityItemFieldsIntoDisplayedNames(searchedCity);
 		}
