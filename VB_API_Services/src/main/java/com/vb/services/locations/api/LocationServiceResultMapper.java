@@ -2,9 +2,9 @@ package com.vb.services.locations.api;
 
 import javax.ws.rs.core.Response.Status;
 
-import com.vb.dynamodb.domain.ICityDomainService;
-import com.vb.dynamodb.domain.ICityDomainService.CityServiceFailureException;
-import com.vb.dynamodb.domain.ICityDomainService.CityServiceFailureReason;
+import com.vb.dynamodb.domain.CityDomainService;
+import com.vb.dynamodb.domain.CityDomainService.CityServiceFailureException;
+import com.vb.dynamodb.domain.CityDomainService.CityServiceFailureReason;
 
 /**
  * Location API Response code, Exceptions and their mapping
@@ -27,7 +27,7 @@ public class LocationServiceResultMapper {
 	/**
 	 * Convert the status type to result code
 	 */
-	public static Integer resultCode(ICityDomainService.CityServiceFailureReason reason) {
+	public static Integer resultCode(CityDomainService.CityServiceFailureReason reason) {
 		switch (reason) {
 			case SUCCESS:
 				return 0;

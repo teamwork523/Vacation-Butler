@@ -13,7 +13,7 @@ import com.vb.services.model.CreateCityRs;
 import com.vb.services.model.ReadCityRs;
 import com.vb.services.model.UpdateCityRq;
 
-public class CityCRUDAPIImpl implements ICityCRUDAPI {
+public class CityCRUDAPIImpl implements CityCRUDAPI {
 
 	private static final VBLogger LOGGER = VBLogger.getLogger(CityCRUDAPIImpl.class);
 	

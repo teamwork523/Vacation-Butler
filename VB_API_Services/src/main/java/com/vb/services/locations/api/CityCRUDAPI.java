@@ -15,7 +15,7 @@ import com.vb.services.model.UpdateCityRq;
 
 @Path("/api/city")
 @Produces(value = MediaType.APPLICATION_JSON)
-public interface ICityCRUDAPI {
+public interface CityCRUDAPI {
 	
 	@POST
 	@Path("/createcity")

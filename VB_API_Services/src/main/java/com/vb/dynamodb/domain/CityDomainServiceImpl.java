@@ -19,7 +19,7 @@ import com.vb.services.logging.VBLogger;
  *
  */
 // TODO: Add Spring annotation
-public class CityDomainServiceImpl implements ICityDomainService {
+public class CityDomainServiceImpl implements CityDomainService {
 
 	private static final VBLogger LOGGER = VBLogger.getLogger(CityDomainServiceImpl.class);
 	private static final String STATE_NAME_INDEX_NAME = "StateName-index";

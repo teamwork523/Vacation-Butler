@@ -10,7 +10,7 @@ import com.vb.dynamodb.model.CityItem;
  * @author Haokun Luo
  *
  */
-public interface ICityDomainService {
+public interface CityDomainService {
 	
 	/**
 	 * Error codes describing ways/reasons CityDomainService methods can fail

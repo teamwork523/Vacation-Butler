@@ -18,8 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.vb.dynamodb.domain.CityDomainServiceImpl;
-import com.vb.dynamodb.domain.ICityDomainService.CityServiceFailureException;
-import com.vb.dynamodb.domain.ICityDomainService.CityServiceFailureReason;
+import com.vb.dynamodb.domain.CityDomainService.CityServiceFailureException;
+import com.vb.dynamodb.domain.CityDomainService.CityServiceFailureReason;
 import com.vb.dynamodb.model.CityItem;
 import com.vb.services.model.CreateCityRq;
 import com.vb.services.model.CreateCityRs;
