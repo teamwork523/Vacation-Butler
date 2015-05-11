@@ -23,7 +23,7 @@ import com.vb.dynamodb.domain.CityDomainService.CityServiceFailureReason;
 import com.vb.dynamodb.model.CityItem;
 import com.vb.services.model.CreateCityRq;
 import com.vb.services.model.CreateCityRs;
-import com.vb.services.model.ReadCityRs;
+import com.vb.services.model.ReadMultipleCitiesRs;
 
 public class CityCRUDAPIUnitTest extends EasyMockSupport {
 	
@@ -186,7 +186,7 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		// Validate the result
 		assertNotNull(rs);
 		assertEquals(HTTP_STATUS_OK, rs.getStatus());
-		ReadCityRs data = (ReadCityRs) rs.getEntity();
+		ReadMultipleCitiesRs data = (ReadMultipleCitiesRs) rs.getEntity();
 		assertNotNull(data);
 		assertEquals(LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS, data.getResultCode());
 		assertEquals(1, data.getCityList().size());
@@ -221,7 +221,7 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		// Validate the result
 		assertNotNull(rs);
 		assertEquals(HTTP_STATUS_BAD_REQUEST, rs.getStatus());
-		ReadCityRs data = (ReadCityRs) rs.getEntity();
+		ReadMultipleCitiesRs data = (ReadMultipleCitiesRs) rs.getEntity();
 		assertNotNull(data);
 		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
 		assertNotNull(data.getDebugInfo());
@@ -255,7 +255,7 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		// Validate the result
 		assertNotNull(rs);
 		assertEquals(HTTP_STATUS_INTERNAL_SERVER_ERROR, rs.getStatus());
-		ReadCityRs data = (ReadCityRs) rs.getEntity();
+		ReadMultipleCitiesRs data = (ReadMultipleCitiesRs) rs.getEntity();
 		assertNotNull(data);
 		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
 		assertNotNull(data.getDebugInfo());

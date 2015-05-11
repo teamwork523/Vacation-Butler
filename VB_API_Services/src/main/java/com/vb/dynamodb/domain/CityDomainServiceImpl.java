@@ -13,7 +13,7 @@ import com.vb.dynamodb.model.CityItem;
 import com.vb.services.logging.VBLogger;
 
 /**
- * The implementation of interface CityDAO
+ * The implementation of interface CityDomainService
  * 
  * @author Haokun Luo
  *

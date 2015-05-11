@@ -3,7 +3,7 @@ package com.vb.services.main;
 import com.vb.services.configuration.ServicesAPIConfigurations;
 import com.vb.services.health.LocationsHealthCheck;
 import com.vb.services.locations.api.CityCRUDAPIImpl;
-import com.vb.services.locations.api.PlaceCRUDAPI;
+import com.vb.services.locations.api.PlaceCRUDAPIImpl;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -23,7 +23,7 @@ public class ServicesAPIMain extends Application<ServicesAPIConfigurations> {
 	@Override
 	public void run(ServicesAPIConfigurations conf, Environment env)
 			throws Exception {
-		final PlaceCRUDAPI locAPI = new PlaceCRUDAPI();
+		final PlaceCRUDAPIImpl locAPI = new PlaceCRUDAPIImpl();
 		final CityCRUDAPIImpl cityPAI = new CityCRUDAPIImpl();
 		final LocationsHealthCheck locHealth = new LocationsHealthCheck();
 		

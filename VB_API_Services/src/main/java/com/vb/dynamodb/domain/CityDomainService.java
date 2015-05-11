@@ -29,7 +29,7 @@ public interface CityDomainService {
 	}
 	
 	/**
-	 * Exception thrown when an ICityDomainService method fails
+	 * Exception thrown when an CityDomainService method fails
 	 */
 	public class CityServiceFailureException extends Exception {
 

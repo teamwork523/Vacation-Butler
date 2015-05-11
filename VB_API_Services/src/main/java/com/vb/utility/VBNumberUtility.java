@@ -27,4 +27,16 @@ public class VBNumberUtility {
 		}
 		return randomGenerator.nextInt(Integer.MAX_VALUE);
 	}
+	
+	/**
+	 * Generate a random Long, notice that the security seed only covers up to 2^48
+	 * 
+	 * @return
+	 */
+	public static Long getRandomLong() {
+		if (randomGenerator == null) {
+			randomGenerator = new Random();
+		}
+		return randomGenerator.nextLong();
+	}
 }

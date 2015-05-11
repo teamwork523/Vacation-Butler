@@ -10,7 +10,7 @@ import com.vb.dynamodb.model.CityItem;
 import com.vb.services.logging.VBLogger;
 import com.vb.services.model.CreateCityRq;
 import com.vb.services.model.CreateCityRs;
-import com.vb.services.model.ReadCityRs;
+import com.vb.services.model.ReadMultipleCitiesRs;
 import com.vb.services.model.UpdateCityRq;
 
 public class CityCRUDAPIImpl implements CityCRUDAPI {
@@ -45,10 +45,10 @@ public class CityCRUDAPIImpl implements CityCRUDAPI {
 		LOGGER.info("Calling Read City By City Name API");
 		try {
 			List<CityItem> cities = cityDomainService.searchCitiesByCityName(cityName);
-			ReadCityRs rcRs = new ReadCityRs(cities);
+			ReadMultipleCitiesRs rcRs = new ReadMultipleCitiesRs(cities);
 			return Response.ok(rcRs).build();
 		} catch (Exception e) {
-			ReadCityRs rcRs = new ReadCityRs(e);
+			ReadMultipleCitiesRs rcRs = new ReadMultipleCitiesRs(e);
 			Status st = LocationServiceResultMapper.httpStatus(e);
 			return Response.status(st).entity(rcRs).build();
 		}
