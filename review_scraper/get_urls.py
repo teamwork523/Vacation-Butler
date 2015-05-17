@@ -4,7 +4,7 @@ import re
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-def get_cities(state_name, state_url):
+def get_cities(country_name, state_name, state_url, file_path):
 	driver = webdriver.Firefox()
 	driver.get(state_url)
 	#expand the page to show all cities
@@ -28,6 +28,7 @@ def get_cities(state_name, state_url):
 	    attraction_url = re.sub(r'Destinations-g([0-9]+)-(.+)-Vacations.html', r'Attractions-g\1-Activities-\2.html', attraction_url)
 	    city_urls.append(attraction_url)
 	    num_cities +=1
-	with open("city_urls.json", "w") as outfile:
+	with open(file_path + country_name + "_" + state_name + ".json", "w") as outfile:
 	    json.dump(city_urls, outfile)
-	print "number of cities: " + str(num_cities)
+	print country_name+"_"+state_name+".json" + " has " + str(num_cities) + " cities"
+	driver.quit()
