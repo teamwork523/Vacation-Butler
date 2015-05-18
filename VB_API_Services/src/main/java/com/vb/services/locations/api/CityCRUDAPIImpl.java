@@ -44,7 +44,7 @@ public class CityCRUDAPIImpl implements CityCRUDAPI {
 	public Response readCityByCityName(String cityName) {
 		LOGGER.info("Calling Read City By City Name API");
 		try {
-			List<CityItem> cities = cityDomainService.searchCitiesByCityName(cityName);
+			List<CityItem> cities = cityDomainService.getCitiesByCityName(cityName);
 			ReadMultipleCitiesRs rcRs = new ReadMultipleCitiesRs(cities);
 			return Response.ok(rcRs).build();
 		} catch (Exception e) {

@@ -77,4 +77,15 @@ public class CityItem {
 	@DynamoDBVersionAttribute
     public Long getVersion() { return version; }
     public void setVersion(Long version) { this.version = version;}
+    
+    /**
+	 * Basic info about the city
+	 */
+	public String toString() {
+		String DEL = ", ";
+		return "City ID: " + this.cityID + DEL +
+			   "City Name: " + this.cityName + DEL +
+			   "State Name: " + this.stateName + DEL +
+			   "Country Name: " + this.countryName;
+	}
 }

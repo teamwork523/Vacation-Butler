@@ -16,16 +16,20 @@ public interface CityDomainService {
 	 * Error codes describing ways/reasons CityDomainService methods can fail
 	 */
 	public enum CityServiceFailureReason {
-		SUCCESS,
-		AWS_DYNAMO_SERVER_ERROR,
-		AWS_DYNAMO_CLIENT_ERROR,
-		CITY_EXISTED,
-		CITY_ID_EXISTED,
-		ILLEGAL_ARGUMENT,
-		INVALID_CITY_NAME, 
-		INVALID_STATE_NAME, 
-		INVALID_COUNTRY_NAME,
-		UNKNOWN_FAILURE
+		SUCCESS(0),
+		AWS_DYNAMO_SERVER_ERROR(10),
+		AWS_DYNAMO_CLIENT_ERROR(11),
+		CITY_EXISTED(20),
+		CITY_ID_EXISTED(21),
+		ILLEGAL_ARGUMENT(30),
+		INVALID_CITY_NAME(31),
+		INVALID_STATE_NAME(32), 
+		INVALID_COUNTRY_NAME(33),
+		UNKNOWN_FAILURE(1);
+		
+		private final int resultCode;
+		CityServiceFailureReason(int resultCode) { this.resultCode = resultCode; }
+	    public int getResultCode() { return this.resultCode; }
 	}
 	
 	/**
@@ -66,12 +70,12 @@ public interface CityDomainService {
 	CityItem addCity(CityItem city) throws CityServiceFailureException;
 	
 	/**
-	 * Search cities by name
+	 * Get cities by name
 	 * 
 	 * @param cityID
 	 * @return
 	 */
-	List<CityItem> searchCitiesByCityName(String cityName) throws CityServiceFailureException ;
+	List<CityItem> getCitiesByCityName(String cityName) throws CityServiceFailureException ;
 	
 	/**
 	 * Update the city information based on name and ID

@@ -38,8 +38,6 @@ public class CityDomainServiceImpl implements CityDomainService {
 	 * While if the condition is true, report the failure by logs and
 	 * throwing a CityServiceFailureException
 	 * 
-	 * TODO: Add logging here
-	 * 
 	 * @param condition
 	 * @param reason -- the code for failure
 	 * @param message -- debugging
@@ -57,8 +55,6 @@ public class CityDomainServiceImpl implements CityDomainService {
 	/**
 	 * if an argument if null, log and throw a standard
 	 * IlligalArgumentException. Otherwise, do nothing
-	 *
-	 * TODO: add logging
 	 *
 	 * @param name -- describe the pass-in object
 	 * @param value -- the actual object
@@ -94,7 +90,7 @@ public class CityDomainServiceImpl implements CityDomainService {
 	/**
 	 * Convert a DB stored location name into display location name
 	 */
-	protected String convertToDisplayLocationName(String storeLocName) {
+	protected static String convertToDisplayLocationName(String storeLocName) {
 		if (storeLocName == null) {
 			return storeLocName;
 		}
@@ -115,7 +111,7 @@ public class CityDomainServiceImpl implements CityDomainService {
 	 * @param displayLocName
 	 * @return
 	 */
-	protected String convertToStoreLocationName(String displayLocName) {
+	protected static String convertToStoreLocationName(String displayLocName) {
 		if (displayLocName == null) {
 			return displayLocName;
 		}
@@ -136,7 +132,7 @@ public class CityDomainServiceImpl implements CityDomainService {
 	 * @param storedLocName
 	 * @return whether the location name is valid or not
 	 */
-	protected boolean isValidLocationName(String storedLocName) {
+	protected static boolean isValidLocationName(String storedLocName) {
 		if (storedLocName == null) {
 			return false;
 		}
@@ -269,19 +265,19 @@ public class CityDomainServiceImpl implements CityDomainService {
 		// Validate the converted names
 		failIf(false == isValidLocationName(city.getCityName()),
 			   CityServiceFailureReason.INVALID_CITY_NAME, 
-			   "Invalid city name format.");
+			   "Invalid city name format with city name " + city.getCityName());
 		failIf(false == isValidLocationName(city.getStateName()),
 			   CityServiceFailureReason.INVALID_STATE_NAME, 
-			   "Invalid state name format.");
+			   "Invalid state name format with state name " + city.getStateName());
 		failIf(false == isValidLocationName(city.getCountryName()),
 			   CityServiceFailureReason.INVALID_COUNTRY_NAME, 
-			   "Invalid country name format.");
+			   "Invalid country name format with country name " + city.getCountryName());
 		
 		// Check city name existed in the database
 		List<CityItem> existedCities = retrieveCitiesByName(city.getCityName(), NameType.CITY_NAME_TYPE);
 		failIf(true == isCityExisted(city, existedCities), 
 			   CityServiceFailureReason.CITY_EXISTED,
-			   "The city already exists.");
+			   "The city already exists. " + city.toString());
 		
 		// Generate the ID based on the number of same named city in DB
 		Integer newCityID = findLargestID(existedCities) + 1;
@@ -292,10 +288,10 @@ public class CityDomainServiceImpl implements CityDomainService {
 			DynamoDBConnector.dynamoDBMapper.save(city);
 		} catch (AmazonServiceException ase) {
 			failBecauseOfException(CityServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
-								   "Add city to CityTable failed on server side.", ase);
+								   "Add city to CityTable failed on server side. " + city.toString(), ase);
 		} catch (AmazonClientException ace) {
 			failBecauseOfException(CityServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
-					   			   "QAdd city to CityTable failed on client side.", ace);
+					   			   "Add city to CityTable failed on client side. " + city.toString(), ace);
 		}
 		
 		// convert back to the fancy display name
@@ -309,7 +305,7 @@ public class CityDomainServiceImpl implements CityDomainService {
 	 * @return a list of city items
 	 */
 	@Override
-	public List<CityItem> searchCitiesByCityName(String cityName) 
+	public List<CityItem> getCitiesByCityName(String cityName) 
 			throws CityServiceFailureException {
 		
 		LOGGER.debug("Calling Domain Search City");
@@ -321,7 +317,7 @@ public class CityDomainServiceImpl implements CityDomainService {
 		String storeCityName = convertToStoreLocationName(cityName);
 		failIf(false == isValidLocationName(storeCityName),
 			   CityServiceFailureReason.INVALID_CITY_NAME, 
-			   "Invalid city name format.");
+			   "Invalid city name format with city name " + cityName);
 		
 		// Call DB
 		List<CityItem> searchedCities = retrieveCitiesByName(storeCityName, NameType.CITY_NAME_TYPE);

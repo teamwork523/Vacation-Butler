@@ -1,6 +1,7 @@
 package com.vb.services.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vb.services.locations.api.LocationServiceResultMapper;
 
 public class CreatePlaceRs {
 	
@@ -67,6 +68,24 @@ public class CreatePlaceRs {
 	public void setDebugInfo(String debugInfo) {
 		this.debugInfo = debugInfo;
 	}
+
+	/**
+	 * Constructor for Success
+	 * @param placeID
+	 */
+	public CreatePlaceRs(Long placeID) {
+		this.placeID = placeID;
+		this.resultCode = LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS;
+		this.debugInfo = null;
+	}
 	
-	// TODO: construstor for success and error
+	/**
+	 * Constructor for Error
+	 * @param e
+	 */
+	public CreatePlaceRs(Exception e) {
+		this.placeID = null;
+		this.resultCode = LocationServiceResultMapper.resultCode(e);
+		this.debugInfo = LocationServiceResultMapper.debugInfo(e);
+	}
 }

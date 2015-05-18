@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBVersionAttribute;
+import com.vb.services.model.CreatePlaceRq;
 
 /**
  * Map Place table to Java object
@@ -42,6 +43,36 @@ public class PlaceItem {
 		super();
 	}
 	
+	/**
+	 * @param cityName
+	 * @param cityID
+	 */
+	public PlaceItem(String cityName, Integer cityID) {
+		super();
+		this.cityName = cityName;
+		this.cityID = cityID;
+	}
+	
+	// Constructor based on request
+	public PlaceItem(CreatePlaceRq CPRq) {
+		super();
+		this.activities = CPRq.getActivities();
+		this.categories = CPRq.getCategories();
+		this.cityID = CPRq.getCityID();
+		this.cityName = CPRq.getCityName();
+		this.hours = CPRq.getHours();
+		this.latitude = CPRq.getLatitude();
+		this.longitude = CPRq.getLongitude();
+		this.numberOfReviews = CPRq.getNumberOfReviews();
+		this.phoneNumber = CPRq.getPhoneNumber();
+		this.placeName = CPRq.getPlaceName();
+		this.rating = CPRq.getRating();
+		this.recommandedLengthOfVisit = CPRq.getRecommandedLengthOfVisit();
+		this.reviewURL = CPRq.getReviewURL();
+		this.streetAddress = CPRq.getStreetAddress();
+		this.zipCode = CPRq.getZipCode();
+	}
+
 	@DynamoDBHashKey(attributeName="PlaceID")
 	public Long getPlaceID() {
 		return placeID;
@@ -188,4 +219,14 @@ public class PlaceItem {
 		this.version = version;
 	}
 
+	/**
+	 * Basic info about the place
+	 */
+	public String toString() {
+		String DEL = ", ";
+		return "Place ID: " + this.placeID + DEL +
+			   "Place Name: " + this.placeName + DEL +
+			   "City ID: " + this.cityID + DEL +
+			   "City Name: " + this.cityName;
+	}
 }

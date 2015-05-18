@@ -3,6 +3,9 @@ package com.vb.services.locations.api;
 import javax.ws.rs.core.Response.Status;
 
 import com.vb.dynamodb.domain.CityDomainService;
+import com.vb.dynamodb.domain.PlaceDomainService.PlaceServiceFailureException;
+import com.vb.dynamodb.domain.PlaceDomainService.PlaceServiceFailureReason;
+import com.vb.dynamodb.domain.PlaceDomainServiceImpl;
 import com.vb.dynamodb.domain.CityDomainService.CityServiceFailureException;
 import com.vb.dynamodb.domain.CityDomainService.CityServiceFailureReason;
 
@@ -25,27 +28,17 @@ public class LocationServiceResultMapper {
 	public final static Integer RESULT_CODE_FOR_UNEXPECTED_EXCEPTION = resultCode(CityServiceFailureReason.UNKNOWN_FAILURE);
 	
 	/**
-	 * Convert the status type to result code
+	 * Convert the status type to result code for City Domain
 	 */
 	public static Integer resultCode(CityDomainService.CityServiceFailureReason reason) {
-		switch (reason) {
-			case SUCCESS:
-				return 0;
-			case AWS_DYNAMO_CLIENT_ERROR: 
-				return 10;
-			case AWS_DYNAMO_SERVER_ERROR: 
-				return 11;
-			case INVALID_CITY_NAME:
-				return 20;
-			case INVALID_STATE_NAME:
-				return 21;
-			case INVALID_COUNTRY_NAME:
-				return 22;
-			case CITY_EXISTED:
-				return 30;
-			default:					  
-				return 1;
-		}
+		return reason.getResultCode();
+	}
+	
+	/**
+	 * Convert the status type to result code for Place Domain
+	 */
+	public static Integer resultCode(PlaceDomainServiceImpl.PlaceServiceFailureReason reason) {
+		return reason.getResultCode();
 	}
 	
 	/**
@@ -54,7 +47,9 @@ public class LocationServiceResultMapper {
 	public static Integer resultCode(Exception e) {
 		if (e instanceof CityServiceFailureException) {
 			return resultCode(((CityServiceFailureException)e).getReason());
-		} 
+		} else if (e instanceof PlaceServiceFailureException) {
+			return resultCode(((PlaceServiceFailureException)e).getReason());
+		}
 		return RESULT_CODE_FOR_UNEXPECTED_EXCEPTION;
 	}
 	
@@ -65,7 +60,10 @@ public class LocationServiceResultMapper {
 		StringBuilder msg = new StringBuilder();
 		String DEL = ": ";
 		if (e instanceof CityServiceFailureException) {
-			msg.append( ((CityServiceFailureException)e).getReason().toString() );
+			msg.append(((CityServiceFailureException)e).getReason().toString());
+			msg.append(DEL);
+		} else if (e instanceof PlaceServiceFailureException) {
+			msg.append(((PlaceServiceFailureException)e).getReason().toString());
 			msg.append(DEL);
 		}
 		msg.append(e.getClass().getSimpleName());
@@ -84,6 +82,13 @@ public class LocationServiceResultMapper {
 				reason == CityServiceFailureReason.INVALID_CITY_NAME ||
 				reason == CityServiceFailureReason.INVALID_COUNTRY_NAME ||
 				reason == CityServiceFailureReason.INVALID_STATE_NAME) {
+				return Status.BAD_REQUEST;
+			}
+		} else if (e instanceof PlaceServiceFailureException) {
+			PlaceServiceFailureReason reason = ((PlaceServiceFailureException)e).getReason();
+			if (reason == PlaceServiceFailureReason.ILLEGAL_ARGUMENT ||
+				reason == PlaceServiceFailureReason.INVALID_CITY_NAME ||
+				reason == PlaceServiceFailureReason.INVALID_CITY_ID) {
 				return Status.BAD_REQUEST;
 			}
 		}

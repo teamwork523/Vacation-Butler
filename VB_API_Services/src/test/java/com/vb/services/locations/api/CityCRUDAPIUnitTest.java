@@ -177,7 +177,7 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		cityList.add(resultCity);
 		
 		// Setup Mock
-		EasyMock.expect(m_cityCRUDAPI.cityDomainService.searchCitiesByCityName(testCityName)).andReturn((List<CityItem>)cityList);
+		EasyMock.expect(m_cityCRUDAPI.cityDomainService.getCitiesByCityName(testCityName)).andReturn((List<CityItem>)cityList);
 		replayAll();
 		
 		// Make the call
@@ -212,7 +212,7 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		CityServiceFailureException ex = new CityServiceFailureException(reason);
 		
 		// Setup Mock
-		EasyMock.expect(m_cityCRUDAPI.cityDomainService.searchCitiesByCityName(invalidCityName)).andThrow(ex);
+		EasyMock.expect(m_cityCRUDAPI.cityDomainService.getCitiesByCityName(invalidCityName)).andThrow(ex);
 		replayAll();
 		
 		// Make the call
@@ -246,7 +246,7 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		CityServiceFailureException ex = new CityServiceFailureException(reason);
 		
 		// Setup Mock
-		EasyMock.expect(m_cityCRUDAPI.cityDomainService.searchCitiesByCityName(testCityName)).andThrow(ex);
+		EasyMock.expect(m_cityCRUDAPI.cityDomainService.getCitiesByCityName(testCityName)).andThrow(ex);
 		replayAll();
 		
 		// Make the call
