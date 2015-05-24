@@ -24,6 +24,8 @@ public interface PlaceDomainService {
 		ILLEGAL_ARGUMENT(30),
 		INVALID_CITY_NAME(31),
 		INVALID_CITY_ID(32),
+		INVALID_PLACE_ID(33),
+		CITY_NOT_EXISTED(40),
 		UNKNOWN_FAILURE(1);
 		
 		private final int resultCode;

@@ -1,5 +1,7 @@
 package com.vb.services.locations.api;
 
+import java.util.List;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -8,6 +10,7 @@ import com.vb.dynamodb.model.PlaceItem;
 import com.vb.services.logging.VBLogger;
 import com.vb.services.model.CreatePlaceRs;
 import com.vb.services.model.CreatePlaceRq;
+import com.vb.services.model.ReadMultiplePlacesRs;
 
 public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 	
@@ -36,14 +39,30 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 
 	@Override
 	public Response readPlaceByCityNameAndID(String cityName, Integer cityID) {
-		// TODO Auto-generated method stub
-		return null;
+		LOGGER.info("Calling Read Places by City Name and ID API");
+		try {
+			List<PlaceItem> places = placeDomainService.getPlacesByCityNameAndID(cityName, cityID);
+			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(places);
+			return Response.ok(rmpRs).build();
+		} catch (Exception e) {
+			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(e);
+			Status st = LocationServiceResultMapper.httpStatus(e);
+			return Response.status(st).entity(rmpRs).build();
+		}
 	}
 
 	@Override
 	public Response readPlaceByPlaceID(Long placeID) {
-		// TODO Auto-generated method stub
-		return null;
+		LOGGER.info("Calling Read Places by Place ID API");
+		try {
+			PlaceItem place = placeDomainService.getPlaceByPlaceID(placeID);
+			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(place);
+			return Response.ok(rmpRs).build();
+		} catch (Exception e) {
+			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(e);
+			Status st = LocationServiceResultMapper.httpStatus(e);
+			return Response.status(st).entity(rmpRs).build();
+		}
 	}
 
 }

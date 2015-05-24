@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.vb.dynamodb.connector.DynamoDBConnector;
+import com.vb.dynamodb.model.CityItem;
 import com.vb.dynamodb.model.PlaceItem;
 import com.vb.services.logging.VBLogger;
 import com.vb.utility.VBNumberUtility;
@@ -190,12 +191,45 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 			result = DynamoDBConnector.dynamoDBMapper.load(PlaceItem.class, placeID);
 		} catch (AmazonServiceException ase) {
 			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
-					   "Querying city name and ID in PlaceTable failed on server side.", ase);
+					   "Querying Place ID (" + placeID + ") in PlaceTable failed on server side.", ase);
 		} catch (AmazonClientException ace) {
 			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
-		   			   "Querying city name and ID in PlaceTable failed on client side.", ace);
+		   			   "Querying Place ID (" + placeID + ") in PlaceTable failed on client side.", ace);
 		}
 		return result;
+	}
+	
+	/**
+	 * Check whether the given city name and city id exist in CityTable
+	 * 
+	 * @param cityName
+	 * @param cityID
+	 * @return
+	 */
+	private boolean isCityExisted(String cityName, Integer cityID) 
+			throws PlaceServiceFailureException{
+		CityItem result = null;
+		try {
+			result = DynamoDBConnector.dynamoDBMapper.load(CityItem.class, cityName, cityID);
+		}catch (AmazonServiceException ase) {
+			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
+					   "Querying city name (" + cityName + ") and ID (" + cityID + 
+					   ") in CityTable failed on server side.", ase);
+		} catch (AmazonClientException ace) {
+			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
+					"Querying city name (" + cityName + ") and ID (" + cityID + 
+					") in CityTable failed on  client side.", ace);
+		}
+		return (result != null);
+	}
+	
+	/**
+	 * Convert city name into displayed format
+	 * 
+	 * @param place
+	 */
+	private void updatePlaceItemFieldsIntoDisplayedNames(PlaceItem place) {
+		place.setCityName(CityDomainServiceImpl.convertToDisplayLocationName(place.getCityName()));
 	}
 	
 	/////////////////////////////////////////////////
@@ -223,6 +257,10 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 			   "City ID cannot be negative.");
 		
 		// Check existence
+		failIf(false == isCityExisted(place.getCityName(), place.getCityID()),
+			   PlaceServiceFailureReason.CITY_NOT_EXISTED,
+			   "Cannot find city with city name (" + place.getCityName() + 
+			   ") and ID (" + place.getCityID() + ")");
 		List<PlaceItem> placesListInSameCity = retrivePlacesByCityNameAndID(place.getCityName(),
 																			place.getCityID());
 		failIf(true == isPlaceExisted(place, placesListInSameCity),
@@ -254,7 +292,7 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		}
 		
 		// Convert stored name into display name
-		place.setPlaceName(CityDomainServiceImpl.convertToDisplayLocationName(place.getPlaceName()));
+		updatePlaceItemFieldsIntoDisplayedNames(place);
 		
 		return place;
 	}
@@ -262,15 +300,43 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 	@Override
 	public List<PlaceItem> getPlacesByCityNameAndID(String cityName,
 			Integer cityID) throws PlaceServiceFailureException {
-		// TODO Auto-generated method stub
-		return null;
+
+		LOGGER.info("Calling Domain Get Places by City Name and City ID");
+		
+		// Input validation
+		failIfArgumentNull("City Name", cityName);
+		failIfArgumentNull("City ID", cityID);
+		String storeCityName = CityDomainServiceImpl.convertToStoreLocationName(cityName);
+		failIf(false == CityDomainServiceImpl.isValidLocationName(storeCityName),
+			   PlaceServiceFailureReason.INVALID_CITY_NAME, 
+			   "Invalid city name format.");
+		
+		// Call DB
+		List<PlaceItem> places = retrivePlacesByCityNameAndID(storeCityName, cityID);
+		for (PlaceItem place : places) {
+			updatePlaceItemFieldsIntoDisplayedNames(place);
+		}
+		
+		return places;
 	}
 
 	@Override
 	public PlaceItem getPlaceByPlaceID(Long placeID)
 			throws PlaceServiceFailureException {
-		// TODO Auto-generated method stub
-		return null;
+
+		LOGGER.info("Calling Domain Get Places by Place ID");
+		
+		// Input validation
+		failIfArgumentNull("Place ID", placeID);
+		failIf(placeID < 0, 
+			   PlaceServiceFailureReason.INVALID_PLACE_ID,
+			   "Place ID cannot be negative.");
+		
+		// Call DB
+		PlaceItem place = retrivePlaceByID(placeID);
+		updatePlaceItemFieldsIntoDisplayedNames(place);
+		
+		return place;
 	}
 
 }

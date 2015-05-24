@@ -308,7 +308,7 @@ public class CityDomainServiceImpl implements CityDomainService {
 	public List<CityItem> getCitiesByCityName(String cityName) 
 			throws CityServiceFailureException {
 		
-		LOGGER.debug("Calling Domain Search City");
+		LOGGER.debug("Calling Domain Get Cities by City Name");
 		
 		// Prevent Nulls
 		failIfArgumentNull("cityName", cityName);

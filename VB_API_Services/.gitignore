@@ -9,3 +9,7 @@
 .ebextensions/
 .settings/
 .elasticbeanstalk/
+
+# Ignore logs
+log/
+*.log

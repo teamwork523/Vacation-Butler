@@ -88,7 +88,8 @@ public class LocationServiceResultMapper {
 			PlaceServiceFailureReason reason = ((PlaceServiceFailureException)e).getReason();
 			if (reason == PlaceServiceFailureReason.ILLEGAL_ARGUMENT ||
 				reason == PlaceServiceFailureReason.INVALID_CITY_NAME ||
-				reason == PlaceServiceFailureReason.INVALID_CITY_ID) {
+				reason == PlaceServiceFailureReason.INVALID_CITY_ID ||
+				reason == PlaceServiceFailureReason.INVALID_PLACE_ID) {
 				return Status.BAD_REQUEST;
 			}
 		}

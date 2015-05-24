@@ -1,8 +1,11 @@
 package com.vb.services.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vb.dynamodb.model.PlaceItem;
+import com.vb.services.locations.api.LocationServiceResultMapper;
 
 public class ReadMultiplePlacesRs {
 	
@@ -27,6 +30,25 @@ public class ReadMultiplePlacesRs {
 		private String  reviewURL;
 		private String  streetAddress;
 		private String  zipCode;
+		
+		// Constructor based on Domain model
+		public Place(PlaceItem place) {
+			this.activities = place.getActivities();
+			this.categories = place.getCategories();
+			this.cityName = place.getCityName();
+			this.cityID = place.getCityID();
+			this.hours = place.getHours();
+			this.latitude = place.getLatitude();
+			this.longitude = place.getLongitude();
+			this.numberOfReviews = place.getNumberOfReviews();
+			this.placeID = place.getPlaceID();
+			this.placeName = place.getPlaceName();
+			this.rating = place.getRating();
+			this.recommandedLengthOfVisit = place.getRecommandedLengthOfVisit();
+			this.reviewURL = place.getReviewURL();
+			this.streetAddress = place.getStreetAddress();
+			this.zipCode = place.getZipCode();
+		}
 		
 		/**
 		 * @return the activities
@@ -348,5 +370,37 @@ public class ReadMultiplePlacesRs {
 	@JsonProperty("Reason")
 	public void setDebugInfo(String debugInfo) {
 		this.debugInfo = debugInfo;
+	}
+	
+	/**
+	 * Constructor for multiple Places
+	 */
+	public ReadMultiplePlacesRs(List<PlaceItem> places) {
+		this.placeList = new ArrayList<Place>();
+		for (PlaceItem place : places) {
+			Place newPlace = new Place(place);
+			this.placeList.add(newPlace);
+		}
+		this.resultCode = LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS;
+		this.debugInfo = null;
+	}
+	
+	/**
+	 * Constructor for single Place
+	 */
+	public ReadMultiplePlacesRs(PlaceItem place) {
+		this.placeList = new ArrayList<Place>();
+		this.placeList.add(new Place(place));
+		this.resultCode = LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS;
+		this.debugInfo = null;
+	}
+	
+	/**
+	 * Constructor for failure
+	 */
+	public ReadMultiplePlacesRs(Exception e) {
+		this.placeList = null;
+		this.resultCode = LocationServiceResultMapper.resultCode(e);
+		this.debugInfo = LocationServiceResultMapper.debugInfo(e);
 	}
 }
