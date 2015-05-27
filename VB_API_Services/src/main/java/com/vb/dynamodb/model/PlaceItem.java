@@ -40,7 +40,14 @@ public class PlaceItem {
 	
 	// Default constructor
 	public PlaceItem() {
-		super();
+		// no-op
+	}
+	
+	/**
+	 * @param placeID
+	 */
+	public PlaceItem(Long placeID) {
+		this.placeID = placeID;
 	}
 	
 	/**
@@ -48,14 +55,12 @@ public class PlaceItem {
 	 * @param cityID
 	 */
 	public PlaceItem(String cityName, Integer cityID) {
-		super();
 		this.cityName = cityName;
 		this.cityID = cityID;
 	}
 	
 	// Constructor based on request
 	public PlaceItem(CreatePlaceRq CPRq) {
-		super();
 		this.activities = CPRq.getActivities();
 		this.categories = CPRq.getCategories();
 		this.cityID = CPRq.getCityID();

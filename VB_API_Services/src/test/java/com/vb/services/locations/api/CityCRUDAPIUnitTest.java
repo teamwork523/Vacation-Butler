@@ -177,7 +177,7 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		cityList.add(resultCity);
 		
 		// Setup Mock
-		EasyMock.expect(m_cityCRUDAPI.cityDomainService.getCitiesByCityName(testCityName)).andReturn((List<CityItem>)cityList);
+		EasyMock.expect(m_cityCRUDAPI.cityDomainService.getCitiesByCityName(testCityName)).andReturn(cityList);
 		replayAll();
 		
 		// Make the call

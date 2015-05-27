@@ -310,6 +310,9 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		failIf(false == CityDomainServiceImpl.isValidLocationName(storeCityName),
 			   PlaceServiceFailureReason.INVALID_CITY_NAME, 
 			   "Invalid city name format.");
+		failIf(cityID < 0,
+			   PlaceServiceFailureReason.INVALID_CITY_ID,
+			   "City ID cannot be negative.");
 		
 		// Call DB
 		List<PlaceItem> places = retrivePlacesByCityNameAndID(storeCityName, cityID);
