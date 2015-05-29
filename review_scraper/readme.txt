@@ -2,10 +2,16 @@ Require scrapy 24.4, selenium 2.45, and Firefox
 sudo pip install scrapy
 sudo pip install selenium
 
-Get all the cities in a province:
-1) enter "python scraper_controller.py"
-2) select a state or province. The script will launch Firefox via selenium, which will get the ajax contents.
-2) output city_urls.json
+Run scraper_controller.py
+1) select option 1 to get the urls of each city, output in /state_and_province_urls/
+2) option 2 to get the attraction urls in each city, output in /attraction_urls/
+3) option 3 to scrape the detailed attraction info, output in /scraped_data/
+
+You can detele files in those folders, and scraper will retrieve new data
+
+
+----------------------------
+Other scripts (for reference only, they are used by the scraper controller)
 
 Scrape attractions\activities from trip advisor:
 1) open a terminal

@@ -4,14 +4,20 @@ import sys
 import os
 import shutil
 import remove_duplicate_json
+import get_attraction_info
 
 option1_file_path = "./state_and_province_urls/"
 option2_file_path = "./attraction_urls/"
 option3_file_path = "./scraped_data/"
 state_and_province_csv = "states_and_provinces.csv"
 city_url_temp = "city_urls.json"
+attraction_temp = "attraction_info.json"
 removed_duplicate = "processed_data.json"
 scrapy_command = "scrapy crawl myspider -o data.json"
+
+if os.path.isdir(option3_file_path) == False:
+    os.makedirs(option3_file_path) # create a directory if it doesn't exist
+    print "created a directory: " + option3_file_path
 
 print "1 - get state and province urls"
 print "2 - get attraction urls"
@@ -49,3 +55,20 @@ elif selected_option == 2:
         os.system(scrapy_command)
         remove_duplicate_json.remove_duplicate_lines()
         shutil.copyfile(removed_duplicate, option2_file_path+f)
+elif selected_option == 3:
+    file_list = [f for f in os.listdir(option2_file_path) if os.path.isfile(option2_file_path + f)]
+    print "number of states/provinces to scrape: " + str(len(file_list))
+    for f in file_list:
+        if os.path.isfile(attraction_temp): #if temp files already exist, delete them
+            os.remove(attraction_temp)
+        if os.path.isfile(removed_duplicate):
+            os.remove(removed_duplicate)
+        if os.path.isfile(option3_file_path + f): # resume download if the attraction file already exists
+            shutil.copyfile(option3_file_path + f, attraction_temp)
+        shutil.copyfile(option2_file_path + f, removed_duplicate)
+        try:
+            get_attraction_info.get_entry_info()
+        except:
+            shutil.copyfile(attraction_temp, option3_file_path+f) #save the file if there is an exception
+            raise
+        shutil.copyfile(attraction_temp, option3_file_path+f)
