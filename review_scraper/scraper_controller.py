@@ -14,6 +14,7 @@ city_url_temp = "city_urls.json"
 attraction_temp = "attraction_info.json"
 removed_duplicate = "processed_data.json"
 scrapy_command = "scrapy crawl myspider -o data.json"
+scrapy_output_file = "data.json"
 
 if os.path.isdir(option3_file_path) == False:
     os.makedirs(option3_file_path) # create a directory if it doesn't exist
@@ -44,11 +45,15 @@ elif selected_option == 2:
     file_list = [f for f in os.listdir(option1_file_path) if os.path.isfile(option1_file_path + f)]
     print "number of state/province urls: " + str(len(file_list))
     for f in file_list:
+        if f.endswith('.json') == False: #if it is not a json file, skip
+            continue
         if os.path.isfile(option2_file_path + f): # skip if the attraction url file already exists
             print "skipped " + option2_file_path + f
             continue
         if os.path.isfile(city_url_temp): #if temp files already exist, delete them
             os.remove(city_url_temp)
+        if os.path.isfile(scrapy_output_file):
+            os.remove(scrapy_output_file)
         if os.path.isfile(removed_duplicate):
             os.remove(removed_duplicate)
         shutil.copyfile(option1_file_path + f, city_url_temp)
@@ -59,6 +64,8 @@ elif selected_option == 3:
     file_list = [f for f in os.listdir(option2_file_path) if os.path.isfile(option2_file_path + f)]
     print "number of states/provinces to scrape: " + str(len(file_list))
     for f in file_list:
+        if f.endswith('.json') == False: #if it is not a json file, skip
+            continue
         if os.path.isfile(attraction_temp): #if temp files already exist, delete them
             os.remove(attraction_temp)
         if os.path.isfile(removed_duplicate):
