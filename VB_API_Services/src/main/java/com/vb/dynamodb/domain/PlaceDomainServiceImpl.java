@@ -5,6 +5,7 @@ import java.util.List;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
@@ -25,6 +26,8 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 	private static final VBLogger LOGGER = VBLogger.getLogger(PlaceDomainServiceImpl.class);
 	private static final String CITY_NAME_AND_ID_INDEX_NAME = "CityName-CityID-index";
 	private static final String CITY_ID_RANGE_KEY_ATTRIBUTE_NAME = "CityID";
+	private static final String PLACE_NAME_ATTRIBUTE_NAME = "PlaceName";
+	private static final String PLACE_NAME_INDEX_NAME = "PlaceName-index";
 	
 	/////////////////////////////////////////////////
 	////////////// Failure Reporting ////////////////
@@ -168,10 +171,12 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 			results = DynamoDBConnector.dynamoDBMapper.query(PlaceItem.class, queryExpression);
 		} catch (AmazonServiceException ase) {
 			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
-					   "Querying city name and ID in PlaceTable failed on server side.", ase);
+					   "Querying city name (" + cityName + ") and ID (" + cityID + 
+					   ") in PlaceTable failed on server side.", ase);
 		} catch (AmazonClientException ace) {
 			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
-		   			   "Querying city name and ID in PlaceTable failed on client side.", ace);
+		   			   "Querying city name (" + cityName + ") and ID (" + cityID + 
+					   ") in PlaceTable failed on client side.", ace);
 		}
 		
 		return results;
@@ -214,11 +219,11 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		}catch (AmazonServiceException ase) {
 			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
 					   "Querying city name (" + cityName + ") and ID (" + cityID + 
-					   ") in CityTable failed on server side.", ase);
+					   ") in City Table failed on server side.", ase);
 		} catch (AmazonClientException ace) {
-			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
-					"Querying city name (" + cityName + ") and ID (" + cityID + 
-					") in CityTable failed on  client side.", ace);
+				failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
+					   "Querying city name (" + cityName + ") and ID (" + cityID + 
+					   ") in City Table failed on  client side.", ace);
 		}
 		return (result != null);
 	}
@@ -230,6 +235,67 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 	 */
 	private void updatePlaceItemFieldsIntoDisplayedNames(PlaceItem place) {
 		place.setCityName(CityDomainServiceImpl.convertToDisplayLocationName(place.getCityName()));
+	}
+	
+	/**
+	 * Find all the places with keyword in their place names
+	 * WARN: this is a costly call
+	 * 
+	 * @param placeNameKeyword
+	 * @return
+	 */
+	private List<PlaceItem> retrievePlacesByPartialMatchedPlaceName(String placeNameKeyword, int numOfThreads)
+			throws PlaceServiceFailureException {		
+		// Construct the query
+		DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+		scanExpression.addFilterCondition(PLACE_NAME_ATTRIBUTE_NAME, 
+					                      new Condition()
+											  .withComparisonOperator(ComparisonOperator.CONTAINS)
+											  .withAttributeValueList(new AttributeValue().withS(placeNameKeyword)));
+		
+		// Calling DB
+		List<PlaceItem> results = null;
+		try {
+			results = DynamoDBConnector.dynamoDBMapper.parallelScan(PlaceItem.class, scanExpression, numOfThreads);
+		} catch (AmazonServiceException ase) {
+			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
+					   "Scan place name keyword (" + placeNameKeyword + ") in Place Table failed on server side.", ase);
+		} catch (AmazonClientException ace) {
+			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
+					   "Scan place name keyword (" + placeNameKeyword + ") in Place Table failed on client side.", ace);
+		}
+		return results;
+	}
+	
+	/**
+	 * Find the places with exactly the same place name
+	 * 
+	 * @param placeName
+	 * @return
+	 * @throws PlaceServiceFailureException
+	 */
+	private List<PlaceItem> retrievePlacesByPlaceName(String placeName) 
+			throws PlaceServiceFailureException {
+		PlaceItem placeKey = new PlaceItem(placeName);
+		
+		// Construct the query
+		DynamoDBQueryExpression<PlaceItem> queryExpression = null;
+		queryExpression = new DynamoDBQueryExpression<PlaceItem>()
+							  .withIndexName(PLACE_NAME_INDEX_NAME)
+							  .withHashKeyValues(placeKey);
+		
+		// Calling DB
+		List<PlaceItem> results = null;
+		try {
+			results = DynamoDBConnector.dynamoDBMapper.query(PlaceItem.class, queryExpression);
+		} catch (AmazonServiceException ase) {
+			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
+					   "Querying place name (" + placeName + ") in PlaceTable failed on server side.", ase);
+		} catch (AmazonClientException ace) {
+			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
+		   			   "Querying place name (" + placeName + ") in PlaceTable failed on client side.", ace);
+		}
+		return results;
 	}
 	
 	/////////////////////////////////////////////////

@@ -43,22 +43,19 @@ public class PlaceItem {
 		// no-op
 	}
 	
-	/**
-	 * @param placeID
-	 */
 	public PlaceItem(Long placeID) {
 		this.placeID = placeID;
 	}
-	
-	/**
-	 * @param cityName
-	 * @param cityID
-	 */
+
 	public PlaceItem(String cityName, Integer cityID) {
 		this.cityName = cityName;
 		this.cityID = cityID;
 	}
 	
+	public PlaceItem(String placeName) {
+		this.placeName = placeName;
+	}
+
 	// Constructor based on request
 	public PlaceItem(CreatePlaceRq CPRq) {
 		this.activities = CPRq.getActivities();
