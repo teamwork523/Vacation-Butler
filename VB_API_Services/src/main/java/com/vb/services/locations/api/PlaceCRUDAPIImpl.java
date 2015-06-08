@@ -11,6 +11,7 @@ import com.vb.services.logging.VBLogger;
 import com.vb.services.model.CreatePlaceRs;
 import com.vb.services.model.CreatePlaceRq;
 import com.vb.services.model.ReadMultiplePlacesRs;
+import com.vb.services.model.ReadPlacesByKeywordRq;
 
 public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 	
@@ -63,6 +64,14 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 			Status st = LocationServiceResultMapper.httpStatus(e);
 			return Response.status(st).entity(rmpRs).build();
 		}
+	}
+
+	@Override
+	public Response readPlacesByKeyword(String placeKeyword,
+			ReadPlacesByKeywordRq requestBody) {
+		LOGGER.info("Calling Read Places by Keyword API");
+		// TODO: finish this
+		return null;
 	}
 
 }

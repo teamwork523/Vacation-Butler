@@ -2,6 +2,7 @@ package com.vb.services.locations.api;
 
 import com.codahale.metrics.annotation.Timed;
 import com.vb.services.model.CreatePlaceRq;
+import com.vb.services.model.ReadPlacesByKeywordRq;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,4 +31,10 @@ public interface PlaceCRUDAPI {
 	@Path("/readplacebyplaceid/{place_id}")
 	@Timed
 	public Response readPlaceByPlaceID(@PathParam("place_id") Long placeID);
+	
+	@POST
+	@Path("readplaces/keyword/{place_keyword}")
+	@Timed
+	public Response readPlacesByKeyword(@PathParam("place_keyword") String placeKeyword,
+									    ReadPlacesByKeywordRq requestBody);
 }

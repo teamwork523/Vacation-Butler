@@ -17,7 +17,7 @@ public class ServicesAPIMain extends Application<ServicesAPIConfigurations> {
 	
 	@Override
 	public void initialize(Bootstrap<ServicesAPIConfigurations> bootstrap) {
-		// no-op	
+		// no-op
 	}
 
 	@Override
