@@ -4,9 +4,6 @@ import time
 
 url = "http://dev-env-xwauaaztim.elasticbeanstalk.com/api/city/createcity"
 
-req = urllib2.Request(url)
-req.add_header('Content-Type', 'application/json')
-
 with open('list_of_cities.txt', 'r') as city_file:
     for line in city_file:
         city_dict = {}
@@ -15,6 +12,8 @@ with open('list_of_cities.txt', 'r') as city_file:
         city_dict['State Name'] = city_split_list[1].strip()
         city_dict['Country Name'] = city_split_list[0].strip()
         try:
+            req = urllib2.Request(url)
+            req.add_header('Content-Type', 'application/json')
             response = urllib2.urlopen(req, json.dumps(city_dict)).read()
         except urllib2.HTTPError, e:
             if e.getcode() == 500 or e.getcode() == 400:
@@ -22,4 +21,3 @@ with open('list_of_cities.txt', 'r') as city_file:
             else:
                 raise
         print response
-        time.sleep(1)
