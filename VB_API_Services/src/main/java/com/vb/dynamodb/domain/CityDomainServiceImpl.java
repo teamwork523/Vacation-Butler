@@ -126,7 +126,7 @@ public class CityDomainServiceImpl implements CityDomainService {
 	}
 	
 	/**
-	 * A DB stored location name must only contains [a-z_-], and cannot be empty
+	 * A DB stored location name must only contains [a-z_-.], and cannot be empty
 	 * Also [_] cannot at the beginning or the end of the string
 	 * 
 	 * @param storedLocName
@@ -136,7 +136,7 @@ public class CityDomainServiceImpl implements CityDomainService {
 		if (storedLocName == null) {
 			return false;
 		}
-		String cityLocRegx = "(^[a-z][a-z_-]*[a-z]$)|(^[a-z]{1}$)";
+		String cityLocRegx = "(^[a-z][a-z_-|\\.]*[a-z]$)|(^[a-z]{1}$)";
 		return storedLocName.matches(cityLocRegx);
 	}
 	
