@@ -90,4 +90,14 @@ public interface PlaceDomainService {
 	 * @throws PlaceServiceFailureException
 	 */
 	PlaceItem getPlaceByPlaceID(Long placeID) throws PlaceServiceFailureException;
+	
+	/**
+	 * Get list of places matched with keyword
+	 * 
+	 * @param keyword
+	 * @param isPartialMatched (whether the )
+	 * @return
+	 * @throws PlaceServiceFailureException
+	 */
+	List<PlaceItem> getPlacesByKeyword(String keyword, boolean isPartialMatched) throws PlaceServiceFailureException;
 }

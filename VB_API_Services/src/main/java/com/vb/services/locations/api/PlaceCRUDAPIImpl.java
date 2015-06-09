@@ -70,7 +70,8 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 	public Response readPlacesByKeyword(String placeKeyword,
 			ReadPlacesByKeywordRq requestBody) {
 		LOGGER.info("Calling Read Places by Keyword API");
-		// TODO: finish this
+		LOGGER.info("Place Key is " + placeKeyword);
+		LOGGER.info("Is Partial Matched? " + requestBody.isPartialMatched());
 		return null;
 	}
 

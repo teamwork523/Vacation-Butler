@@ -408,4 +408,11 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		return place;
 	}
 
+	@Override
+	public List<PlaceItem> getPlacesByKeyword(String keyword,
+			boolean isPartialMatched) throws PlaceServiceFailureException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
