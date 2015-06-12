@@ -99,5 +99,5 @@ public interface PlaceDomainService {
 	 * @return
 	 * @throws PlaceServiceFailureException
 	 */
-	List<PlaceItem> getPlacesByKeyword(String keyword, boolean isPartialMatched) throws PlaceServiceFailureException;
+	List<PlaceItem> getPlacesByKeyword(String keyword, Boolean isPartialMatched) throws PlaceServiceFailureException;
 }

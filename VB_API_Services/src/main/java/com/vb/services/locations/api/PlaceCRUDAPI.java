@@ -33,7 +33,7 @@ public interface PlaceCRUDAPI {
 	public Response readPlaceByPlaceID(@PathParam("place_id") Long placeID);
 	
 	@POST
-	@Path("readplaces/keyword/{place_keyword}")
+	@Path("/readplaces/keyword/{place_keyword}")
 	@Timed
 	public Response readPlacesByKeyword(@PathParam("place_keyword") String placeKeyword,
 									    ReadPlacesByKeywordRq requestBody);

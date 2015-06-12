@@ -26,6 +26,7 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 	@Override
 	public Response createPlace(CreatePlaceRq place) {
 		LOGGER.info("Calling Create Place API");
+		LOGGER.info("Place request is " + place.toString());
 		try {
 			PlaceItem newPlace = new PlaceItem(place);
 			newPlace = placeDomainService.addPlace(newPlace);
@@ -41,6 +42,8 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 	@Override
 	public Response readPlaceByCityNameAndID(String cityName, Integer cityID) {
 		LOGGER.info("Calling Read Places by City Name and ID API");
+		LOGGER.info("City Name is " + cityName);
+		LOGGER.info("City ID is " + cityID);
 		try {
 			List<PlaceItem> places = placeDomainService.getPlacesByCityNameAndID(cityName, cityID);
 			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(places);
@@ -55,6 +58,7 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 	@Override
 	public Response readPlaceByPlaceID(Long placeID) {
 		LOGGER.info("Calling Read Places by Place ID API");
+		LOGGER.info("Place ID is " + placeID);
 		try {
 			PlaceItem place = placeDomainService.getPlaceByPlaceID(placeID);
 			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(place);
@@ -72,7 +76,15 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 		LOGGER.info("Calling Read Places by Keyword API");
 		LOGGER.info("Place Key is " + placeKeyword);
 		LOGGER.info("Is Partial Matched? " + requestBody.isPartialMatched());
-		return null;
+		try {
+			List<PlaceItem> places = placeDomainService.getPlacesByKeyword(placeKeyword, requestBody.isPartialMatched());
+			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(places);
+			return Response.ok(rmpRs).build();
+		} catch (Exception e) {
+			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(e);
+			Status st = LocationServiceResultMapper.httpStatus(e);
+			return Response.status(st).entity(rmpRs).build();
+		}
 	}
 
 }

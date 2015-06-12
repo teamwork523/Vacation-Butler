@@ -2,6 +2,8 @@ package com.vb.dynamodb.domain;
 
 import java.util.List;
 
+import org.apache.commons.lang.WordUtils;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
@@ -28,6 +30,7 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 	private static final String CITY_ID_RANGE_KEY_ATTRIBUTE_NAME = "CityID";
 	private static final String PLACE_NAME_ATTRIBUTE_NAME = "PlaceName";
 	private static final String PLACE_NAME_INDEX_NAME = "PlaceName-index";
+	private static final int PLACES_SEARCH_BY_kEYWORD_PATIAL_MATCH_THREAD_NUM = 8;
 	
 	/////////////////////////////////////////////////
 	////////////// Failure Reporting ////////////////
@@ -87,6 +90,49 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 	/////////////////////////////////////////////////
 	////////////// Helper Functions /////////////////
 	/////////////////////////////////////////////////
+	/**
+	 * Simply make place name lower case before storing into DB
+	 * 
+	 * @param placeName
+	 * @return
+	 */
+	protected static String convertPlaceNameIntoStoredFormat(String placeName) {
+		return placeName.toLowerCase();
+	}
+	
+	/**
+	 * Capitalize the first letter
+	 * 
+	 * @param placeName
+	 * @return
+	 */
+	protected static String convertPlaceNameIntoDisplayFormat(String placeName) {
+		char[] dels = {' ', '-'};
+		String capitalizedPlaceName = WordUtils.capitalize(placeName, dels);
+		
+		return capitalizedPlaceName;
+	}
+	
+	/**
+	 * Convert place item into stored format
+	 * 
+	 * @param place
+	 */
+	private void updatePlaceItemFieldsIntoStoredFormat(PlaceItem place) {
+		place.setCityName(CityDomainServiceImpl.convertToStoreLocationName(place.getCityName()));
+		place.setPlaceName(convertPlaceNameIntoStoredFormat(place.getPlaceName()));
+	}
+	
+	/**
+	 * Convert place item into displayed format
+	 * 
+	 * @param place
+	 */
+	private void updatePlaceItemFieldsIntoDisplayedFormat(PlaceItem place) {
+		place.setCityName(CityDomainServiceImpl.convertToDisplayLocationName(place.getCityName()));
+		place.setPlaceName(convertPlaceNameIntoDisplayFormat(place.getPlaceName()));
+	}
+	
 	/**
 	 * Validate the following fields to be not null
 	 * 	1. City Name
@@ -229,15 +275,6 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 	}
 	
 	/**
-	 * Convert city name into displayed format
-	 * 
-	 * @param place
-	 */
-	private void updatePlaceItemFieldsIntoDisplayedNames(PlaceItem place) {
-		place.setCityName(CityDomainServiceImpl.convertToDisplayLocationName(place.getCityName()));
-	}
-	
-	/**
 	 * Find all the places with keyword in their place names
 	 * WARN: this is a costly call
 	 * 
@@ -311,8 +348,8 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		// Checking cannot be null fields
 		validatePlaceItemFieldsNotNull(place);
 		
-		// Convert city name to be DB stored friendly
-		place.setCityName(CityDomainServiceImpl.convertToStoreLocationName(place.getCityName()));
+		// Convert into DB stored format
+		updatePlaceItemFieldsIntoStoredFormat(place);
 		
 		// Validate user input
 		failIf(false == CityDomainServiceImpl.isValidLocationName(place.getCityName()),
@@ -358,7 +395,7 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		}
 		
 		// Convert stored name into display name
-		updatePlaceItemFieldsIntoDisplayedNames(place);
+		updatePlaceItemFieldsIntoDisplayedFormat(place);
 		
 		return place;
 	}
@@ -383,7 +420,7 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		// Call DB
 		List<PlaceItem> places = retrivePlacesByCityNameAndID(storeCityName, cityID);
 		for (PlaceItem place : places) {
-			updatePlaceItemFieldsIntoDisplayedNames(place);
+			updatePlaceItemFieldsIntoDisplayedFormat(place);
 		}
 		
 		return places;
@@ -403,16 +440,34 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		
 		// Call DB
 		PlaceItem place = retrivePlaceByID(placeID);
-		updatePlaceItemFieldsIntoDisplayedNames(place);
+		updatePlaceItemFieldsIntoDisplayedFormat(place);
 		
 		return place;
 	}
 
 	@Override
 	public List<PlaceItem> getPlacesByKeyword(String keyword,
-			boolean isPartialMatched) throws PlaceServiceFailureException {
-		// TODO Auto-generated method stub
-		return null;
+			Boolean isPartialMatched) throws PlaceServiceFailureException {
+		
+		LOGGER.info("Calling Domain Get Places by Keyword");
+		
+		// Input validation
+		failIfArgumentNull("Place Keyword", keyword);
+		failIfArgumentNull("Is Partial Matched", isPartialMatched);
+		
+		// Call DB
+		List<PlaceItem> places = null;
+		if (isPartialMatched == true) {
+			places = retrievePlacesByPartialMatchedPlaceName(convertPlaceNameIntoStoredFormat(keyword), 
+															 PLACES_SEARCH_BY_kEYWORD_PATIAL_MATCH_THREAD_NUM);
+		} else {
+			places = retrievePlacesByPlaceName(convertPlaceNameIntoStoredFormat(keyword));
+		}
+		for (PlaceItem place : places) {
+			updatePlaceItemFieldsIntoDisplayedFormat(place);
+		}
+		
+		return places;
 	}
 
 }
