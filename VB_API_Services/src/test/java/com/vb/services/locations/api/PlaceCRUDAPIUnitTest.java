@@ -24,6 +24,7 @@ import com.vb.dynamodb.model.PlaceItem;
 import com.vb.services.model.CreatePlaceRq;
 import com.vb.services.model.CreatePlaceRs;
 import com.vb.services.model.ReadMultiplePlacesRs;
+import com.vb.services.model.ReadPlacesByKeywordRq;
 
 public class PlaceCRUDAPIUnitTest extends EasyMockSupport {
 	
@@ -397,6 +398,116 @@ public class PlaceCRUDAPIUnitTest extends EasyMockSupport {
 		
 		// Make the call
 		Response rs = m_placeCRUDAPI.readPlaceByPlaceID(testPlaceID);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_INTERNAL_SERVER_ERROR, rs.getStatus());
+		ReadMultiplePlacesRs data = (ReadMultiplePlacesRs) rs.getEntity();
+		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
+		assertNotNull(data.getDebugInfo());
+		assertTrue(data.getDebugInfo().contains(reason.toString()));
+		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
+		assertNull(data.getPlaceList());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	////////////////////////////////////////////////
+	// Read place by keyword
+	/**
+	* Test OK case for read place by keyword API
+	* 
+	* @throws Exception
+	*/
+	@Test
+	public void readPlaceByKeyword_HappyPath() throws Exception {
+	
+		// Test Data
+		String testPlaceKeyword = "Test Keyword";
+		Boolean testIsPartial = false;
+		PlaceItem place = new PlaceItem(testPlaceKeyword);
+		List<PlaceItem> places = new ArrayList<PlaceItem>();
+		places.add(place);
+		
+		// Setup Mock
+		EasyMock.expect(m_placeDomainService.getPlacesByKeyword(testPlaceKeyword, testIsPartial)).andReturn(places);
+		replayAll();
+		
+		// Make the call
+		ReadPlacesByKeywordRq request = new ReadPlacesByKeywordRq(testIsPartial);
+		Response rs = m_placeCRUDAPI.readPlacesByKeyword(testPlaceKeyword, request);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_OK, rs.getStatus());
+		ReadMultiplePlacesRs data = (ReadMultiplePlacesRs) rs.getEntity();
+		assertNotNull(data);
+		assertEquals(LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS, data.getResultCode());
+		assertEquals(1, data.getPlaceList().size());
+		assertEquals(testPlaceKeyword, data.getPlaceList().get(0).getPlaceName());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	/**
+	 * Test for invalid place name
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void readPlaceByKeyword_InvalidPlaceName() throws Exception {
+		
+		// Test Data
+		String testPlaceKeyword = null;
+		Boolean testIsPartial = false;
+		PlaceServiceFailureReason reason = PlaceServiceFailureReason.ILLEGAL_ARGUMENT;
+		PlaceServiceFailureException ex = new PlaceServiceFailureException(reason);
+		
+		// Setup Mock
+		EasyMock.expect(m_placeDomainService.getPlacesByKeyword(testPlaceKeyword, testIsPartial)).andThrow(ex);
+		replayAll();
+		
+		// Make the call
+		ReadPlacesByKeywordRq request = new ReadPlacesByKeywordRq(testIsPartial);
+		Response rs = m_placeCRUDAPI.readPlacesByKeyword(testPlaceKeyword, request);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_BAD_REQUEST, rs.getStatus());
+		ReadMultiplePlacesRs data = (ReadMultiplePlacesRs) rs.getEntity();
+		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
+		assertNotNull(data.getDebugInfo());
+		assertTrue(data.getDebugInfo().contains(reason.toString()));
+		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
+		assertNull(data.getPlaceList());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	/**
+	 * Test for invalid place name
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void readPlaceByKeyword_AWSServerSideError() throws Exception {
+		
+		// Test Data
+		String testPlaceKeyword = null;
+		Boolean testIsPartial = false;
+		PlaceServiceFailureReason reason = PlaceServiceFailureReason.AWS_DYNAMO_SERVER_ERROR;
+		PlaceServiceFailureException ex = new PlaceServiceFailureException(reason);
+		
+		// Setup Mock
+		EasyMock.expect(m_placeDomainService.getPlacesByKeyword(testPlaceKeyword, testIsPartial)).andThrow(ex);
+		replayAll();
+		
+		// Make the call
+		ReadPlacesByKeywordRq request = new ReadPlacesByKeywordRq(testIsPartial);
+		Response rs = m_placeCRUDAPI.readPlacesByKeyword(testPlaceKeyword, request);
 		
 		// Validate the result
 		assertNotNull(rs);

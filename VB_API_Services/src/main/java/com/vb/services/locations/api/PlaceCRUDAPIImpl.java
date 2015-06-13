@@ -25,8 +25,7 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 	//////////////////////////////////////
 	@Override
 	public Response createPlace(CreatePlaceRq place) {
-		LOGGER.info("Calling Create Place API");
-		LOGGER.info("Place request is " + place.toString());
+		LOGGER.info("Calling Create Place API with request " + place.toString());
 		try {
 			PlaceItem newPlace = new PlaceItem(place);
 			newPlace = placeDomainService.addPlace(newPlace);
@@ -41,9 +40,8 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 
 	@Override
 	public Response readPlaceByCityNameAndID(String cityName, Integer cityID) {
-		LOGGER.info("Calling Read Places by City Name and ID API");
-		LOGGER.info("City Name is " + cityName);
-		LOGGER.info("City ID is " + cityID);
+		LOGGER.info("Calling Read Places by City Name and ID API " +
+					"with city name " + cityName + ", and city ID is " + cityID);
 		try {
 			List<PlaceItem> places = placeDomainService.getPlacesByCityNameAndID(cityName, cityID);
 			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(places);
@@ -57,8 +55,7 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 
 	@Override
 	public Response readPlaceByPlaceID(Long placeID) {
-		LOGGER.info("Calling Read Places by Place ID API");
-		LOGGER.info("Place ID is " + placeID);
+		LOGGER.info("Calling Read Places by Place ID API with Place ID " + placeID);
 		try {
 			PlaceItem place = placeDomainService.getPlaceByPlaceID(placeID);
 			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(place);
@@ -73,9 +70,8 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 	@Override
 	public Response readPlacesByKeyword(String placeKeyword,
 			ReadPlacesByKeywordRq requestBody) {
-		LOGGER.info("Calling Read Places by Keyword API");
-		LOGGER.info("Place Key is " + placeKeyword);
-		LOGGER.info("Is Partial Matched? " + requestBody.isPartialMatched());
+		LOGGER.info("Calling Read Places by Keyword API with place key " + placeKeyword +
+					" and whether partial matched as " + requestBody.isPartialMatched());
 		try {
 			List<PlaceItem> places = placeDomainService.getPlacesByKeyword(placeKeyword, requestBody.isPartialMatched());
 			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(places);

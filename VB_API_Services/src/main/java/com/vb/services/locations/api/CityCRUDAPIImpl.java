@@ -25,7 +25,7 @@ public class CityCRUDAPIImpl implements CityCRUDAPI {
 	//////////////////////////////////////
 	@Override
 	public Response createCity(CreateCityRq city) {
-		LOGGER.info("Calling Create City API");
+		LOGGER.info("Calling Create City API with city request " + city.toString());
 		try {
 			CityItem newCity = new CityItem(city.getCityName(), 
 											city.getStateName(), 
@@ -42,7 +42,7 @@ public class CityCRUDAPIImpl implements CityCRUDAPI {
 
 	@Override
 	public Response readCityByCityName(String cityName) {
-		LOGGER.info("Calling Read City By City Name API");
+		LOGGER.info("Calling Read City By City Name API with city name " + cityName);
 		try {
 			List<CityItem> cities = cityDomainService.getCitiesByCityName(cityName);
 			ReadMultipleCitiesRs rcRs = new ReadMultipleCitiesRs(cities);
