@@ -133,11 +133,13 @@ public class CityDomainServiceImpl implements CityDomainService {
 	 * @return whether the location name is valid or not
 	 */
 	protected static boolean isValidLocationName(String storedLocName) {
-		if (storedLocName == null) {
-			return false;
-		}
-		String cityLocRegx = "(^[a-z][a-z_-|\\.]*[a-z]$)|(^[a-z]{1}$)";
-		return storedLocName.matches(cityLocRegx);
+//		if (storedLocName == null) {
+//			return false;
+//		}
+//		String cityLocRegx = "(^[a-z][a-z_-|\\.]*[a-z]$)|(^[a-z]{1}$)";
+//		return storedLocName.matches(cityLocRegx);
+		// TODO: figure out a better regular expression later
+		return true;
 	}
 	
 	/**
