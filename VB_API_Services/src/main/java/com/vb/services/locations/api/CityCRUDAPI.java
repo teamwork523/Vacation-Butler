@@ -36,5 +36,5 @@ public interface CityCRUDAPI {
 	@DELETE
 	@Path("/deletecity/cityname/{city_name}/city_id/{city_id}")
 	@Timed
-    public Response deleteCityByNameAndID(@PathParam("city_id") Integer cityID);
+    public Response deleteCityByNameAndID(@PathParam("city_name") String cityName, @PathParam("city_id") Integer cityID);
 }

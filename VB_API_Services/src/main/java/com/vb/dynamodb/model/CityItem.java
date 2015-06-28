@@ -29,6 +29,12 @@ public class CityItem {
 		this.countryName = countryName;
 	}
 
+	public CityItem(String cityName, Integer cityID) {
+		super();
+		this.cityName = cityName;
+		this.cityID = cityID;
+	}
+
 	// Default constructor
 	public CityItem() {
 		super();

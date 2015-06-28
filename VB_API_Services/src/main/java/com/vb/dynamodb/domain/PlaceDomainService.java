@@ -21,6 +21,7 @@ public interface PlaceDomainService {
 		AWS_DYNAMO_CLIENT_ERROR(11),
 		PLACE_EXISTED(20),
 		PLACE_ID_EXISTED(21),
+		PLACE_NOT_EXISTED(22),
 		ILLEGAL_ARGUMENT(30),
 		INVALID_CITY_NAME(31),
 		INVALID_CITY_ID(32),
@@ -100,4 +101,12 @@ public interface PlaceDomainService {
 	 * @throws PlaceServiceFailureException
 	 */
 	List<PlaceItem> getPlacesByKeyword(String keyword, Boolean isPartialMatched) throws PlaceServiceFailureException;
+	
+	/**
+	 * Delete a place entry by given place ID
+	 * 
+	 * @param placeID
+	 * @throws PlaceServiceFailureException
+	 */
+	void deletePaceByPlaceID(Long placeID) throws PlaceServiceFailureException;
 }

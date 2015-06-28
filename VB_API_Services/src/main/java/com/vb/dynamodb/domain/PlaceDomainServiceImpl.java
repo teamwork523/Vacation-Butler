@@ -470,4 +470,30 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		return places;
 	}
 
+	@Override
+	public void deletePaceByPlaceID(Long placeID)
+			throws PlaceServiceFailureException {
+		
+		LOGGER.info("Calling Domain Delete Place by Place ID");
+		
+		// Input validation
+		failIfArgumentNull("Place ID", placeID);
+		
+		// Call DB
+		PlaceItem deletePlace = new PlaceItem(placeID);
+		try {
+			PlaceItem place = DynamoDBConnector.dynamoDBMapper.load(deletePlace);
+			failIf(null == place,
+				   PlaceServiceFailureReason.PLACE_NOT_EXISTED,
+				   "Place with place ID " + placeID + " doesn't exist in Place Table");
+			DynamoDBConnector.dynamoDBMapper.delete(place);
+		}catch (AmazonServiceException ase) {
+			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
+					   "Delete place to PlaceTable failed on server side. " + deletePlace.toString(), ase);
+		} catch (AmazonClientException ace) {
+			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
+				   	   "Delete place to PlaceTable failed on client side. " + deletePlace.toString(), ace);
+		}
+	}
+
 }

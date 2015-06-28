@@ -10,6 +10,7 @@ import com.vb.dynamodb.model.PlaceItem;
 import com.vb.services.logging.VBLogger;
 import com.vb.services.model.CreatePlaceRs;
 import com.vb.services.model.CreatePlaceRq;
+import com.vb.services.model.DeletePlaceRs;
 import com.vb.services.model.ReadMultiplePlacesRs;
 import com.vb.services.model.ReadPlacesByKeywordRq;
 
@@ -80,6 +81,20 @@ public class PlaceCRUDAPIImpl implements PlaceCRUDAPI {
 			ReadMultiplePlacesRs rmpRs = new ReadMultiplePlacesRs(e);
 			Status st = LocationServiceResultMapper.httpStatus(e);
 			return Response.status(st).entity(rmpRs).build();
+		}
+	}
+
+	@Override
+	public Response deletePlaceByID(Long placeID) {
+		LOGGER.info("Calling Delete Place by Place ID with place ID " + placeID);
+		try {
+			placeDomainService.deletePaceByPlaceID(placeID);
+			DeletePlaceRs dpRs = new DeletePlaceRs();
+			return Response.ok(dpRs).build();
+		} catch (Exception e) {
+			DeletePlaceRs dpRs = new DeletePlaceRs(e);
+			Status st = LocationServiceResultMapper.httpStatus(e);
+			return Response.status(st).entity(dpRs).build();
 		}
 	}
 

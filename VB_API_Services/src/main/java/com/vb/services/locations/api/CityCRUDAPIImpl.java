@@ -10,6 +10,7 @@ import com.vb.dynamodb.model.CityItem;
 import com.vb.services.logging.VBLogger;
 import com.vb.services.model.CreateCityRq;
 import com.vb.services.model.CreateCityRs;
+import com.vb.services.model.DeleteCityRs;
 import com.vb.services.model.ReadMultipleCitiesRs;
 import com.vb.services.model.UpdateCityRq;
 
@@ -61,8 +62,17 @@ public class CityCRUDAPIImpl implements CityCRUDAPI {
 	}
 	
 	@Override
-	public Response deleteCityByNameAndID(Integer cityID) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response deleteCityByNameAndID(String cityName, Integer cityID) {
+		LOGGER.info("Calling Delete City By City Name and ID API with city name " + 
+				    cityName + " and city ID " + cityID);
+		try {
+			cityDomainService.deleteCityByNameAndID(cityName, cityID);
+			DeleteCityRs dcRs = new DeleteCityRs();
+			return Response.ok(dcRs).build();
+		} catch (Exception e) {
+			DeleteCityRs dcRs = new DeleteCityRs(e);
+			Status st = LocationServiceResultMapper.httpStatus(e);
+			return Response.status(st).entity(dcRs).build();
+		}
 	}
 }

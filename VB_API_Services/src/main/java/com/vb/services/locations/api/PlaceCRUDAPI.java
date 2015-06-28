@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.vb.services.model.CreatePlaceRq;
 import com.vb.services.model.ReadPlacesByKeywordRq;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -37,4 +38,9 @@ public interface PlaceCRUDAPI {
 	@Timed
 	public Response readPlacesByKeyword(@PathParam("place_keyword") String placeKeyword,
 									    ReadPlacesByKeywordRq requestBody);
+	
+	@DELETE
+	@Path("/deleteplacebyplaceid/{place_id}")
+	@Timed
+	public Response deletePlaceByID(@PathParam("place_id") Long placeID);
 }

@@ -257,9 +257,9 @@ public class CityDomainServiceImpl implements CityDomainService {
 		LOGGER.info("Calling Domain Add City");
 		
 		// Prevent nulls
-		failIfArgumentNull("cityName", city.getCityName());
-		failIfArgumentNull("stateName", city.getStateName());
-		failIfArgumentNull("countryName", city.getCountryName());
+		failIfArgumentNull("City Name", city.getCityName());
+		failIfArgumentNull("State Name", city.getStateName());
+		failIfArgumentNull("Country Name", city.getCountryName());
 		
 		// Update City/State/Country into stored name
 		updateCityItemFieldsIntoStoredNames(city);
@@ -310,10 +310,10 @@ public class CityDomainServiceImpl implements CityDomainService {
 	public List<CityItem> getCitiesByCityName(String cityName) 
 			throws CityServiceFailureException {
 		
-		LOGGER.debug("Calling Domain Get Cities by City Name");
+		LOGGER.info("Calling Domain Get Cities by City Name");
 		
 		// Prevent Nulls
-		failIfArgumentNull("cityName", cityName);
+		failIfArgumentNull("City Name", cityName);
 		
 		// Check for city name format
 		String storeCityName = convertToStoreLocationName(cityName);
@@ -339,8 +339,35 @@ public class CityDomainServiceImpl implements CityDomainService {
 	@Override
 	public void deleteCityByNameAndID(String cityName, Integer cityID) 
 			throws CityServiceFailureException {
-		// TODO Auto-generated method stub
 		
+		LOGGER.info("Calling Domain Delete Cities by City Name and City ID");
+		
+		// Input Check
+		failIfArgumentNull("City Name", cityName);
+		failIfArgumentNull("City ID", cityID);
+		
+		// Check for city name format
+		String storeCityName = convertToStoreLocationName(cityName);
+		failIf(false == isValidLocationName(storeCityName),
+			   CityServiceFailureReason.INVALID_CITY_NAME, 
+			   "Invalid city name format with city name " + cityName);
+		
+		// Calling DB
+		CityItem deleteCity = new CityItem(storeCityName, cityID);
+		try {
+			// Check if city exist
+			CityItem city = DynamoDBConnector.dynamoDBMapper.load(deleteCity);
+			failIf(null == city, 
+				   CityServiceFailureReason.CITY_NOT_EXISTED,
+				   "City with name " + cityName + " and ID " + cityID + " doesn't exist in City Table");
+			DynamoDBConnector.dynamoDBMapper.delete(city);
+		} catch (AmazonServiceException ase) {
+			failBecauseOfException(CityServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
+								   "Delete city to CityTable failed on server side. " + deleteCity.toString(), ase);
+		} catch (AmazonClientException ace) {
+			failBecauseOfException(CityServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
+					   			   "Delete city to CityTable failed on client side. " + deleteCity.toString(), ace);
+		}
 	}
 
 }

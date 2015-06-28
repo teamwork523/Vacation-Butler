@@ -9,7 +9,7 @@ import com.vb.services.locations.api.LocationServiceResultMapper;
  * @author Haokun Luo
  *
  */
-public class DeleteCityRs {
+public class DeletePlaceRs {
 	
 	/**
 	 * If request failed, why.
@@ -57,7 +57,7 @@ public class DeleteCityRs {
 	/**
 	 * Constructor for Success
 	 */
-	public DeleteCityRs() {
+	public DeletePlaceRs() {
 		this.resultCode = LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS;
 		this.debugInfo = null;
 	}
@@ -65,7 +65,7 @@ public class DeleteCityRs {
 	/**
 	 * Constructor for Errors
 	 */
-	public DeleteCityRs(Exception e) {
+	public DeletePlaceRs(Exception e) {
 		this.resultCode = LocationServiceResultMapper.resultCode(e);
 		this.debugInfo = LocationServiceResultMapper.debugInfo(e);
 	}
