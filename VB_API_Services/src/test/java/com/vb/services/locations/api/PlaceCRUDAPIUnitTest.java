@@ -23,6 +23,7 @@ import com.vb.dynamodb.domain.PlaceDomainServiceImpl;
 import com.vb.dynamodb.model.PlaceItem;
 import com.vb.services.model.CreatePlaceRq;
 import com.vb.services.model.CreatePlaceRs;
+import com.vb.services.model.DeletePlaceRs;
 import com.vb.services.model.ReadMultiplePlacesRs;
 import com.vb.services.model.ReadPlacesByKeywordRq;
 
@@ -488,7 +489,7 @@ public class PlaceCRUDAPIUnitTest extends EasyMockSupport {
 	}
 	
 	/**
-	 * Test for invalid place name
+	 * Test when AWS server has issue
 	 * 
 	 * @throws Exception
 	 */
@@ -518,6 +519,106 @@ public class PlaceCRUDAPIUnitTest extends EasyMockSupport {
 		assertTrue(data.getDebugInfo().contains(reason.toString()));
 		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
 		assertNull(data.getPlaceList());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	////////////////////////////////////////////////
+	// Delete place by place ID
+	/**
+	* Test OK case for delete place by place ID API
+	* 
+	* @throws Exception
+	*/
+	@Test
+	public void deletePlaceByPlaceID_HappyPath() throws Exception {
+		
+		// Test Data
+		Long testPlaceID = 1L;
+		
+		// Setup the Mock
+		m_placeDomainService.deletePaceByPlaceID(testPlaceID);
+		EasyMock.expectLastCall();
+		replayAll();
+		
+		// Make the call
+		Response rs = m_placeCRUDAPI.deletePlaceByID(testPlaceID);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_OK, rs.getStatus());
+		DeletePlaceRs data = (DeletePlaceRs) rs.getEntity();
+		assertNotNull(data);
+		assertEquals(LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS, data.getResultCode());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	/**
+	 * Test for invalid place id
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void deletePlaceByPlaceID_InvalidPlaceID() throws Exception {
+		
+		// Test Data
+		Long invalidTestPlaceID = -1L;
+		PlaceServiceFailureReason reason = PlaceServiceFailureReason.INVALID_PLACE_ID;
+		PlaceServiceFailureException ex = new PlaceServiceFailureException(reason);
+		
+		// Setup the Mock
+		m_placeDomainService.deletePaceByPlaceID(invalidTestPlaceID);
+		EasyMock.expectLastCall().andThrow(ex);
+		replayAll();
+		
+		// Make the call
+		Response rs = m_placeCRUDAPI.deletePlaceByID(invalidTestPlaceID);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_BAD_REQUEST, rs.getStatus());
+		DeletePlaceRs data = (DeletePlaceRs) rs.getEntity();
+		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
+		assertNotNull(data.getDebugInfo());
+		assertTrue(data.getDebugInfo().contains(reason.toString()));
+		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	/**
+	 * Test when AWS has server issue
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void deletePlaceByPlaceID_AWSServerSideError() throws Exception {
+		
+		// Test Data
+		Long invalidTestPlaceID = -1L;
+		PlaceServiceFailureReason reason = PlaceServiceFailureReason.AWS_DYNAMO_SERVER_ERROR;
+		PlaceServiceFailureException ex = new PlaceServiceFailureException(reason);
+		
+		// Setup the Mock
+		m_placeDomainService.deletePaceByPlaceID(invalidTestPlaceID);
+		EasyMock.expectLastCall().andThrow(ex);
+		replayAll();
+		
+		// Make the call
+		Response rs = m_placeCRUDAPI.deletePlaceByID(invalidTestPlaceID);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_INTERNAL_SERVER_ERROR, rs.getStatus());
+		DeletePlaceRs data = (DeletePlaceRs) rs.getEntity();
+		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
+		assertNotNull(data.getDebugInfo());
+		assertTrue(data.getDebugInfo().contains(reason.toString()));
+		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
 		
 		// Check the mocks
 		verifyAll();

@@ -478,6 +478,9 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		
 		// Input validation
 		failIfArgumentNull("Place ID", placeID);
+		failIf(placeID < 0, 
+			   PlaceServiceFailureReason.INVALID_PLACE_ID,
+			   "Place ID cannot be negative.");
 		
 		// Call DB
 		PlaceItem deletePlace = new PlaceItem(placeID);

@@ -23,6 +23,7 @@ import com.vb.dynamodb.domain.CityDomainService.CityServiceFailureReason;
 import com.vb.dynamodb.model.CityItem;
 import com.vb.services.model.CreateCityRq;
 import com.vb.services.model.CreateCityRs;
+import com.vb.services.model.DeleteCityRs;
 import com.vb.services.model.ReadMultipleCitiesRs;
 
 public class CityCRUDAPIUnitTest extends EasyMockSupport {
@@ -267,4 +268,104 @@ public class CityCRUDAPIUnitTest extends EasyMockSupport {
 		verifyAll();
 	}
 	
+	////////////////////////////////////////////////
+	// Delete a city by city name and ID
+	/**
+	* Test the OK case for delete city API
+	*/
+	@Test
+	public void deleteCity_HappyPath() throws Exception {
+		
+		// Test Data
+		String testCityName = "Test City Name";
+		Integer testCityID = 1;
+		
+		// Setup Mock
+		m_cityCRUDAPI.cityDomainService.deleteCityByNameAndID(testCityName, testCityID);
+		EasyMock.expectLastCall();
+		replayAll();
+		
+		// Make the call
+		Response rs = m_cityCRUDAPI.deleteCityByNameAndID(testCityName, testCityID);
+		
+		// Validate the response
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_OK, rs.getStatus());
+		DeleteCityRs data = (DeleteCityRs) rs.getEntity();
+		assertNotNull(data);
+		assertEquals(LocationServiceResultMapper.RESULT_CODE_FOR_SUCCESS, data.getResultCode());
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	/**
+	* Test when the city name is invalid
+	* @throws Exception
+	*/
+	@Test
+	public void deleteCity_InvalidCityName() throws Exception {
+		
+		// Test data
+		String invalidCityName = "#$%^&InvalidName123";
+		Integer testCityID = 1;
+		CityServiceFailureReason reason = CityServiceFailureReason.INVALID_CITY_NAME;
+		CityServiceFailureException ex = new CityServiceFailureException(reason);
+		
+		// Setup the Mock
+		m_cityCRUDAPI.cityDomainService.deleteCityByNameAndID(invalidCityName, testCityID);
+		EasyMock.expectLastCall().andThrow(ex);
+		replayAll();
+		
+		// Make the call
+		Response rs = m_cityCRUDAPI.deleteCityByNameAndID(invalidCityName, testCityID);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_BAD_REQUEST, rs.getStatus());
+		DeleteCityRs data = (DeleteCityRs) rs.getEntity();
+		assertNotNull(data);
+		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
+		assertNotNull(data.getDebugInfo());
+		assertTrue(data.getDebugInfo().contains(reason.toString()));
+		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
+		
+		// Check the mocks
+		verifyAll();
+	}
+	
+	/**
+	* Test when AWS server service is down
+	* @throws Exception
+	*/
+	@Test
+	public void deleteCity_AWSServerSideError() throws Exception {
+		
+		// Test data
+		String testCityName = "Test City Name";
+		Integer testCityID = 1;
+		CityServiceFailureReason reason = CityServiceFailureReason.AWS_DYNAMO_SERVER_ERROR;
+		CityServiceFailureException ex = new CityServiceFailureException(reason);
+		
+		// Setup the Mock
+		m_cityCRUDAPI.cityDomainService.deleteCityByNameAndID(testCityName, testCityID);
+		EasyMock.expectLastCall().andThrow(ex);
+		replayAll();
+		
+		// Make the call
+		Response rs = m_cityCRUDAPI.deleteCityByNameAndID(testCityName, testCityID);
+		
+		// Validate the result
+		assertNotNull(rs);
+		assertEquals(HTTP_STATUS_INTERNAL_SERVER_ERROR, rs.getStatus());
+		DeleteCityRs data = (DeleteCityRs) rs.getEntity();
+		assertNotNull(data);
+		assertEquals(LocationServiceResultMapper.resultCode(ex), data.getResultCode());
+		assertNotNull(data.getDebugInfo());
+		assertTrue(data.getDebugInfo().contains(reason.toString()));
+		assertTrue(data.getDebugInfo().contains(ex.getClass().getSimpleName()));
+		
+		// Check the mocks
+		verifyAll();
+	}
 }
