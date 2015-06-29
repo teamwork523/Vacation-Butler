@@ -75,6 +75,29 @@ public class PlaceItem {
 		this.zipCode = CPRq.getZipCode();
 	}
 
+	public PlaceItem(String activities, String categories,
+			String cityName, Integer cityID, String hours, Double latitude,
+			Double longitude, Long numberOfReviews, String placeName,
+			String phoneNumber, Double rating, String recommandedLengthOfVisit,
+			String reviewURL, String streetAddress, String zipCode) {
+		super();
+		this.activities = activities;
+		this.categories = categories;
+		this.cityName = cityName;
+		this.cityID = cityID;
+		this.hours = hours;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.numberOfReviews = numberOfReviews;
+		this.placeName = placeName;
+		this.phoneNumber = phoneNumber;
+		this.rating = rating;
+		this.recommandedLengthOfVisit = recommandedLengthOfVisit;
+		this.reviewURL = reviewURL;
+		this.streetAddress = streetAddress;
+		this.zipCode = zipCode;
+	}
+
 	@DynamoDBHashKey(attributeName="PlaceID")
 	public Long getPlaceID() {
 		return placeID;
