@@ -9,7 +9,11 @@ import org.apache.commons.lang.WordUtils;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.vb.dynamodb.model.CityItem;
+import com.vb.services.configuration.ServicesProperty;
 import com.vb.services.logging.VBLogger;
 
 /**
@@ -24,6 +28,7 @@ public class CityDomainServiceImpl implements CityDomainService {
 	private static final VBLogger LOGGER = VBLogger.getLogger(CityDomainServiceImpl.class);
 	private static final String STATE_NAME_INDEX_NAME = "StateName-index";
 	private static final String COUNTRY_NAME_INDEX_NAME = "CountryName-index";
+	private static final String CITY_NAME_ATTRIBUTE_NAME = "CityName";
 	public enum NameType {CITY_NAME_TYPE, 
 						  STATE_NAME_TYPE,
 						  COUNTRY_NAME_TYPE};
@@ -232,6 +237,32 @@ public class CityDomainServiceImpl implements CityDomainService {
 	}
 	
 	/**
+	 * Return all the cities in a list
+	 */
+	private List<CityItem> retrieveAllCities() 
+			throws CityServiceFailureException {
+		
+		DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+		scanExpression.addFilterCondition(CITY_NAME_ATTRIBUTE_NAME, 
+										  new Condition()
+											  .withComparisonOperator(ComparisonOperator.NOT_NULL));
+		
+		// Calling DB
+		List<CityItem> cityList = null;
+		try {
+			cityList = DynamoDBConnector.dynamoDBMapper.parallelScan(CityItem.class, scanExpression, 
+																	 ServicesProperty.AWS_SCAN_PARALLEL_THREAD_NUM);
+		} catch (AmazonServiceException ase) {
+			failBecauseOfException(CityServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
+					   "Scan all the cities in city Table failed on server side.", ase);
+		} catch (AmazonClientException ace) {
+			failBecauseOfException(CityServiceFailureReason.AWS_DYNAMO_CLIENT_ERROR, 
+					"Scan all the cities in city Table failed failed on client side.", ace);
+		}
+		return cityList;
+	}
+	
+	/**
 	 * Find the largest ID in a city list
 	 */
 	private Integer findLargestID(List<CityItem> cityList) {
@@ -322,7 +353,12 @@ public class CityDomainServiceImpl implements CityDomainService {
 			   "Invalid city name format with city name " + cityName);
 		
 		// Call DB
-		List<CityItem> searchedCities = retrieveCitiesByName(storeCityName, NameType.CITY_NAME_TYPE);
+		List<CityItem> searchedCities = null;
+		if (storeCityName.equals(ServicesProperty.CITY_SERVICE_SEARCH_FOR_ALL_CITY_NAME)) {
+			searchedCities = retrieveAllCities();
+		} else {
+			searchedCities = retrieveCitiesByName(storeCityName, NameType.CITY_NAME_TYPE);
+		}
 		for (CityItem searchedCity : searchedCities) {
 			updateCityItemFieldsIntoDisplayedNames(searchedCity);
 		}

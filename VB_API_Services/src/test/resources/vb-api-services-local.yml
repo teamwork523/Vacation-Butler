@@ -22,3 +22,4 @@ logging:
       currentLogFilename: ./log/vb-api-services.log
       archivedLogFilenamePattern: ./log/vb-api-services-%d{yyyy-MM-dd}.log
       archivedFileCount: 10
+

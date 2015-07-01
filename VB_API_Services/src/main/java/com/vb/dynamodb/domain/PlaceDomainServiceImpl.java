@@ -14,6 +14,7 @@ import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.vb.dynamodb.connector.DynamoDBConnector;
 import com.vb.dynamodb.model.CityItem;
 import com.vb.dynamodb.model.PlaceItem;
+import com.vb.services.configuration.ServicesProperty;
 import com.vb.services.logging.VBLogger;
 import com.vb.utility.VBNumberUtility;
 
@@ -293,7 +294,8 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		// Calling DB
 		List<PlaceItem> results = null;
 		try {
-			results = DynamoDBConnector.dynamoDBMapper.parallelScan(PlaceItem.class, scanExpression, numOfThreads);
+			results = DynamoDBConnector.dynamoDBMapper.parallelScan(PlaceItem.class, scanExpression, 
+																	ServicesProperty.AWS_SCAN_PARALLEL_THREAD_NUM);
 		} catch (AmazonServiceException ase) {
 			failBecauseOfException(PlaceServiceFailureReason.AWS_DYNAMO_SERVER_ERROR, 
 					   "Scan place name keyword (" + placeNameKeyword + ") in Place Table failed on server side.", ase);
