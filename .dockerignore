@@ -1,1 +1,14 @@
-.git
+# Scrapler folder
+review_scraper/
+
+# Never check-in Credentials
+*/AwsCredentials.properties
+
+# AWS configuration
+.ebextensions/
+.settings/
+.elasticbeanstalk/
+
+# Ignore logs
+log/
+*.log
