@@ -3,10 +3,21 @@ import urllib2
 import re
 import os
 import time
+import pickle
 
 read_city_id_url = "http://dev-env-xwauaaztim.elasticbeanstalk.com/api/city/readcitybyname/"
 upload_place_url = "http://dev-env-xwauaaztim.elasticbeanstalk.com/api/place/createplace"
 option3_file_path = "./scraped_data/"
+already_processed_places_file_name = "already_processed_places.txt"
+already_processed_places_set = set()
+if os.path.isfile(already_processed_places_file_name):#if the file exists
+    already_processed_places_file = open(already_processed_places_file_name,'rb')
+    place_already_processed_list = pickle.load(f)
+    already_processed_places_set = set(place_already_processed_list) #this set prevents duplicate uploads. It's a set of review urls since they are unique
+    already_processed_places_file.close()
+
+if len(already_processed_places_set) > 0:
+    print "number of places already uploaded: ", len(already_processed_places_set)
 file_list = [f for f in os.listdir(option3_file_path) if os.path.isfile(option3_file_path + f)]
 for f in file_list:
     if f.endswith('.json') == False: #if it is not a json file, skip
@@ -14,15 +25,16 @@ for f in file_list:
     json_data=open(option3_file_path + f)
     data = json.load(json_data)
     for num in range(len(data)):
+        if data[num]["review_url"] in already_processed_places_set:
+            continue #the place has already been uploaded, skip
         city_name = data[num]['city']
         # get city id from database
         try:
             city_id_response = urllib2.urlopen(read_city_id_url + city_name.replace(' ', '_'))
-        except urllib2.HTTPError, e:
-            if e.getcode() == 500 or e.getcode() == 400:
-                city_id_response = e.read()
-            else:
-                raise
+        except urllib2.HTTPError, e:#fail to get city id
+            print data[num]['city'], 'failed to get city id'
+            print e.read()
+            raise
         city_data_json = json.load(city_id_response)
         list_of_cities = city_data_json["Cities"]
         city_id = 0
@@ -64,10 +76,30 @@ for f in file_list:
             req = urllib2.Request(upload_place_url)
             req.add_header('Content-Type', 'application/json')
             response = urllib2.urlopen(req, json.dumps(place_dict)).read()
+            already_processed_places_set.add(data[num]["review_url"])#success, add to the set
         except urllib2.HTTPError, e:
             if e.getcode() == 500 or e.getcode() == 400:
                 response = e.read()
+                if 'null' not in response:
+                    already_processed_places_set.add(data[num]["review_url"])#the place is already in database, add to the set
+                else: #failed to upload, server returned place id: null
+                    already_processed_places_file = open(already_processed_places_file_name,'wb')
+                    place_already_processed_list = list(already_processed_places_set) #convert the set to list
+                    pickle.dump(place_already_processed_list, already_processed_places_file)
+                    already_processed_places_file.close()
+                    print e.read()
+                    raise
             else:
+                already_processed_places_file = open(already_processed_places_file_name,'wb')
+                place_already_processed_list = list(already_processed_places_set) #convert the set to list
+                pickle.dump(place_already_processed_list, already_processed_places_file)
+                already_processed_places_file.close()
+                print e.read()
                 raise
         print response
         time.sleep(0.5)
+
+already_processed_places_file = open(already_processed_places_file_name,'wb')
+place_already_processed_list = list(already_processed_places_set) #convert the set to list
+pickle.dump(place_already_processed_list, already_processed_places_file)
+already_processed_places_file.close()
