@@ -12,7 +12,7 @@ already_processed_places_file_name = "already_processed_places.txt"
 already_processed_places_set = set()
 if os.path.isfile(already_processed_places_file_name):#if the file exists
     already_processed_places_file = open(already_processed_places_file_name,'rb')
-    place_already_processed_list = pickle.load(f)
+    place_already_processed_list = pickle.load(already_processed_places_file)
     already_processed_places_set = set(place_already_processed_list) #this set prevents duplicate uploads. It's a set of review urls since they are unique
     already_processed_places_file.close()
 
