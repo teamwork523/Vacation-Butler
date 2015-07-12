@@ -322,6 +322,7 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 		queryExpression = new DynamoDBQueryExpression<PlaceItem>()
 							  .withIndexName(PLACE_NAME_INDEX_NAME)
 							  .withHashKeyValues(placeKey);
+		queryExpression.setConsistentRead(false);
 		
 		// Calling DB
 		List<PlaceItem> results = null;
