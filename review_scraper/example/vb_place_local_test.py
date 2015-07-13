@@ -4,27 +4,34 @@ import urllib
 import urllib2
 import json
 import sys
+import ast
 
 def Usage():
     head_space = len(sys.argv[0]) * " "
-    print sys.argv[0] + " option"
+    print sys.argv[0] + " option count[Default:10]"
     print head_space + " -c: create test places [Default]"
     print head_space + " -d: delete test places"
+    print head_space + " -q: query test places"
 
-def queryAWS(url, data):
+def queryAWS(url, data, method):
     HTTP = "http://"
-    req = urllib2.Request(HTTP + urllib.quote(url))
-    req.add_header('Content-Type', 'application/json')
+    opener = urllib2.build_opener(urllib2.HTTPHandler)
+    request = urllib2.Request(HTTP + urllib.quote(url), data=json.dumps(data))
+    request.add_header('Content-Type', 'application/json')
+    request.get_method = lambda: method
+
+    http_code = 200
 
     try:
-        response = urllib2.urlopen(req, json.dumps(data)).read()
+        response = opener.open(request).read()
     except urllib2.HTTPError, e:
+        http_code = e.getcode()
         if e.getcode() == 500 or e.getcode() == 400:
             response = e.read()
         else:
             raise
-
-    return "HTTP " + str(e.getcode()) + " : " + response
+    
+    return (http_code, response)
 
 def main():
     if (len(sys.argv) == 2 and sys.argv[1] == "-h"):
@@ -32,12 +39,14 @@ def main():
         sys.exit(1)
     
     option = "-c"
-    if (len(sys.argv) == 2):
+    if (len(sys.argv) >= 2):
         option = sys.argv[1]
-
+    total_test_places_count = 10
+    if (len(sys.argv) >= 3):
+        total_test_places_count = int(sys.argv[2])
     domain = "dev-env-xwauaaztim.elasticbeanstalk.com"
     test_place_name = "Test Place "
-    total_test_places_count = 10
+
     
     # Create test places
     if (option == "-c"):
@@ -60,18 +69,37 @@ def main():
             "Zip Code": "T1J 0P6" 
         }
         for i in range(total_test_places_count):
+            print "#" * 80
+            print "Working on place " + str(i)
             data["Place Name"] = test_place_name + str(i)
-            rs = queryAWS(create_place_url, data)
+            rs = queryAWS(create_place_url, data, "POST")
             print rs
+    # Query all the places
+    elif (option == "-q"):
+        request_place_url = domain + "/api/place/readplaces/keyword/"
+        data = {
+            "is Partial Matched": False
+        }
+        for i in range(total_test_places_count):
+            print "#" * 80
+            print "Working on place " + str(i)
+            http_code, rs = queryAWS(request_place_url+test_place_name+str(i), data, "POST")
+            print "HTTP " + str(http_code) + ": " + rs
     # Remove all the places
     elif (option == "-d"):
         request_place_url = domain + "/api/place/readplaces/keyword/"
-        data = {
+        delete_place_url = domain + "/api/place/deleteplacebyplaceid/"
+        query_data = {
             "is Partial Matched": "false"
         }
         for i in range(total_test_places_count):
-            rs = queryAWS(request_place_url+test_place_name+str(i), data)
-            print rs
+            print "#" * 80
+            print "Working on place " + str(i)
+            query_http_code, query_rs = queryAWS(request_place_url+test_place_name+str(i), query_data, "POST")
+            print "HTTP " + str(query_http_code) + ": " + query_rs
+            d = json.loads(query_rs)
+            delete_http_code, delete_rs = queryAWS(delete_place_url+str(d["Places"][0]["Place ID"]), "", "DELETE")
+            print "HTTP " + str(delete_http_code) + ": " + delete_rs
 
 if __name__ == "__main__":
     main()

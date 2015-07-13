@@ -3,6 +3,7 @@
 import urllib
 import urllib2
 import json
+import httplib
 
 url = "http://dev-env-xwauaaztim.elasticbeanstalk.com/api/city/createcity"
 data = {
