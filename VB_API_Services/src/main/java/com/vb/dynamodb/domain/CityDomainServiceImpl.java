@@ -167,10 +167,10 @@ public class CityDomainServiceImpl implements CityDomainService {
 	
 	/**
 	 * Check whether City with same City Name/State Name/Country Name has exist in DB
-	 * @return true if checkCity has all three fields matching with DB records
-	 *         otherwise return false
+	 * @return the existing city if checkCity has all three fields matching with DB records
+	 *         otherwise return null
 	 */
-	private boolean isCityExisted(CityItem checkCity, List<CityItem> existedCities) {
+	private CityItem isCityExisted(CityItem checkCity, List<CityItem> existedCities) {
 		for (CityItem city : existedCities) {
 			if (city.getCityName() != null && 
 				(!city.getCityName().equals(checkCity.getCityName()))) {
@@ -184,9 +184,9 @@ public class CityDomainServiceImpl implements CityDomainService {
 				(!city.getCountryName().equals(checkCity.getCountryName()))) {
 				continue;
 			}
-			return true;
+			return city;
 		}
-		return false;
+		return null;
 	}
 	
 	/**
@@ -308,9 +308,10 @@ public class CityDomainServiceImpl implements CityDomainService {
 		
 		// Check city name existed in the database
 		List<CityItem> existedCities = retrieveCitiesByName(city.getCityName(), NameType.CITY_NAME_TYPE);
-		failIf(true == isCityExisted(city, existedCities), 
+		CityItem existedCity = isCityExisted(city, existedCities);
+		failIf(null != existedCity, 
 			   CityServiceFailureReason.CITY_EXISTED,
-			   "The city already exists. " + city.toString());
+			   "The city already exists. " + ((existedCity != null) ? existedCity.toString() : ""));
 		
 		// Generate the ID based on the number of same named city in DB
 		Integer newCityID = findLargestID(existedCities) + 1;

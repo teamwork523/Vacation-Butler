@@ -166,10 +166,10 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 	 * 
 	 * @param checkPlace
 	 * @param placeList
-	 * @return true if checked place exists in the list
-	 * 		   false if not 
+	 * @return the existing place if checked place exists in the list
+	 * 		   null if not 
 	 */
-	private boolean isPlaceExisted(PlaceItem checkPlace, List<PlaceItem> placeList) {
+	private PlaceItem isPlaceExisted(PlaceItem checkPlace, List<PlaceItem> placeList) {
 		for (PlaceItem curPlace : placeList) {
 			if (curPlace.getPlaceName() != null && 
 				(!curPlace.getPlaceName().equals(checkPlace.getPlaceName()))) {
@@ -183,10 +183,10 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 				(curPlace.getCityID() != checkPlace.getCityID())) {
 				continue;
 			}
-			return true;
+			return curPlace;
 		}
 		
-		return false;
+		return null;
 	}
 	
 	/**
@@ -369,9 +369,10 @@ public class PlaceDomainServiceImpl implements PlaceDomainService {
 			   ") and ID (" + place.getCityID() + ")");
 		List<PlaceItem> placesListInSameCity = retrivePlacesByCityNameAndID(place.getCityName(),
 																			place.getCityID());
-		failIf(true == isPlaceExisted(place, placesListInSameCity),
+		PlaceItem existedPlace = isPlaceExisted(place, placesListInSameCity);
+		failIf(null != existedPlace,
 			   PlaceServiceFailureReason.PLACE_EXISTED,
-			   "Place exists in DB. " + place.toString());
+			   "Place exists in DB. " + ((existedPlace != null) ? existedPlace.toString() : ""));
 		
 		// Create new place ID
 		Long newPlaceID;
