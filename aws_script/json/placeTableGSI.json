@@ -1,0 +1,54 @@
+[
+    {
+        "IndexName": "CityName-CityID-index",
+        "KeySchema": [
+            {
+                "AttributeName": "CityName",
+                "KeyType": "HASH"
+            },
+            {
+                "AttributeName": "CityID",
+                "KeyType": "RANGE"
+            }
+        ],
+        "Projection": {
+            "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 5,
+            "WriteCapacityUnits": 5
+        }
+    },
+    {
+        "IndexName": "PlaceName-index",
+        "KeySchema": [
+            {
+                "AttributeName": "PlaceName",
+                "KeyType": "HASH"
+            }
+        ],
+        "Projection": {
+            "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 5,
+            "WriteCapacityUnits": 5
+        }
+    },
+    {
+        "IndexName": "ZipCode-index",
+        "KeySchema": [
+            {
+                "AttributeName": "ZipCode",
+                "KeyType": "HASH"
+            }
+        ],
+        "Projection": {
+            "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 5,
+            "WriteCapacityUnits": 5
+        }
+    }
+]

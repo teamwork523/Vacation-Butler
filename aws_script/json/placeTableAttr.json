@@ -1,0 +1,22 @@
+[
+    {
+        "AttributeName": "PlaceID",
+        "AttributeType": "N"
+    },
+    {
+        "AttributeName": "CityName",
+        "AttributeType": "S"
+    },
+    {
+        "AttributeName": "CityID",
+        "AttributeType": "N"
+    },
+    {
+        "AttributeName": "PlaceName",
+        "AttributeType": "S"
+    },
+    {
+        "AttributeName": "ZipCode",
+        "AttributeType": "S"
+    }
+]
