@@ -42,7 +42,8 @@ try:
             list_of_cities = city_data_json["Cities"]
             city_id = 0
             for i in range(len(list_of_cities)):
-                if list_of_cities[i]["State Name"].lower() == data[num]['region'].lower() and list_of_cities[i]["Country Name"].lower() == data[num]['country'].lower():
+                state_name = re.sub(r'\([\w]+\)','',data[num]['region']) #remove parentheses
+                if list_of_cities[i]["State Name"].lower() == state_name.lower() and list_of_cities[i]["Country Name"].lower() == data[num]['country'].lower():
                     city_id = list_of_cities[i]["City ID"]
             if city_id == 0:#no match
                 print data[num]['country'], data[num]['region'], data[num]['city']
