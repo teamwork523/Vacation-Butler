@@ -41,12 +41,12 @@ try:
             city_data_json = json.load(city_id_response)
             list_of_cities = city_data_json["Cities"]
             city_id = 0
+            state_name = re.sub(r'\([\w]+\)','',data[num]['region']).strip() #remove parentheses
             for i in range(len(list_of_cities)):
-                state_name = re.sub(r'\([\w]+\)','',data[num]['region']) #remove parentheses
                 if list_of_cities[i]["State Name"].lower() == state_name.lower() and list_of_cities[i]["Country Name"].lower() == data[num]['country'].lower():
                     city_id = list_of_cities[i]["City ID"]
             if city_id == 0:#no match
-                print data[num]['country'], data[num]['region'], data[num]['city']
+                print data[num]['country'], state_name, data[num]['city']
                 raise ValueError('Cannot find city ID')
             place_dict = {}
             place_dict["Activities"] = data[num]["activities"]
